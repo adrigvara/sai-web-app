@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module SAI.Object.Comment exposing (..)
+module SAI.Object.Date exposing (..)
 
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object
@@ -20,18 +20,18 @@ import SAI.Union
 
 
 {-| -}
-id : SelectionSet String SAI.Object.Comment
-id =
-    Object.selectionForField "String" "id" [] Decode.string
+day : SelectionSet Int SAI.Object.Date
+day =
+    Object.selectionForField "Int" "day" [] Decode.int
 
 
 {-| -}
-text : SelectionSet String SAI.Object.Comment
-text =
-    Object.selectionForField "String" "text" [] Decode.string
+month : SelectionSet Int SAI.Object.Date
+month =
+    Object.selectionForField "Int" "month" [] Decode.int
 
 
 {-| -}
-author : SelectionSet decodesTo SAI.Object.Profile -> SelectionSet decodesTo SAI.Object.Comment
-author object_ =
-    Object.selectionForCompositeField "author" [] object_ identity
+year : SelectionSet Int SAI.Object.Date
+year =
+    Object.selectionForField "Int" "year" [] Decode.int

@@ -60,24 +60,12 @@ group requiredArgs object_ =
 
 
 {-| -}
-articles : SelectionSet decodesTo SAI.Object.Article -> SelectionSet (Maybe (List (Maybe decodesTo))) RootQuery
-articles object_ =
-    Object.selectionForCompositeField "articles" [] object_ (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
+users : SelectionSet decodesTo SAI.Object.User -> SelectionSet (List decodesTo) RootQuery
+users object_ =
+    Object.selectionForCompositeField "users" [] object_ (identity >> Decode.list)
 
 
-{-| -}
-profiles : SelectionSet decodesTo SAI.Object.Profile -> SelectionSet (Maybe (List (Maybe decodesTo))) RootQuery
-profiles object_ =
-    Object.selectionForCompositeField "profiles" [] object_ (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
-
-
-{-| -}
-comments : SelectionSet decodesTo SAI.Object.Comment -> SelectionSet (Maybe (List (Maybe decodesTo))) RootQuery
-comments object_ =
-    Object.selectionForCompositeField "comments" [] object_ (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
-
-
-type alias ArticleRequiredArguments =
+type alias UserRequiredArguments =
     { id : SAI.ScalarCodecs.Id }
 
 
@@ -86,6 +74,6 @@ type alias ArticleRequiredArguments =
   - id -
 
 -}
-article : ArticleRequiredArguments -> SelectionSet decodesTo SAI.Object.Article -> SelectionSet (Maybe decodesTo) RootQuery
-article requiredArgs object_ =
-    Object.selectionForCompositeField "article" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ (identity >> Decode.nullable)
+user : UserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet (Maybe decodesTo) RootQuery
+user requiredArgs object_ =
+    Object.selectionForCompositeField "user" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ (identity >> Decode.nullable)

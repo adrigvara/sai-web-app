@@ -5,12 +5,8 @@
 module SAI.Object exposing (..)
 
 
-type Article
-    = Article
-
-
-type Comment
-    = Comment
+type Date
+    = Date
 
 
 type Group
@@ -21,5 +17,5 @@ type Person
     = Person
 
 
-type Profile
-    = Profile
+type User
+    = User

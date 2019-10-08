@@ -7,7 +7,6 @@ import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (Html)
 import Json.Decode as Decode exposing (Value)
-import SAI.Enum.CommitmentLevel as CommitmentLevel exposing (CommitmentLevel)
 import SAI.Object
 import SAI.Object.Person as Person
 import SAI.Query as Query
@@ -45,7 +44,6 @@ type People
 
 type alias Person =
     { name : String
-    , commitmentLevel : CommitmentLevel
     , email : Maybe String
     , phone : Maybe String
     , address : Maybe String
@@ -83,9 +81,8 @@ peopleSel =
 
 personSel : SelectionSet Person SAI.Object.Person
 personSel =
-    SelectionSet.map5 Person
+    SelectionSet.map4 Person
         Person.name
-        Person.commitmentLevel
         Person.email
         Person.phone
         Person.address

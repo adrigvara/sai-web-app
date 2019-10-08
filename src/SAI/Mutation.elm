@@ -131,8 +131,8 @@ enableGroup requiredArgs object_ =
     Object.selectionForCompositeField "enableGroup" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateGroupInput ] object_ identity
 
 
-type alias CreateArticleRequiredArguments =
-    { input : SAI.InputObject.CreateArticleInput }
+type alias CreateUserRequiredArguments =
+    { input : SAI.InputObject.CreateUserInput }
 
 
 {-|
@@ -140,41 +140,13 @@ type alias CreateArticleRequiredArguments =
   - input -
 
 -}
-createArticle : CreateArticleRequiredArguments -> SelectionSet decodesTo SAI.Object.Article -> SelectionSet decodesTo RootMutation
-createArticle requiredArgs object_ =
-    Object.selectionForCompositeField "createArticle" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeCreateArticleInput ] object_ identity
+createUser : CreateUserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet decodesTo RootMutation
+createUser requiredArgs object_ =
+    Object.selectionForCompositeField "createUser" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeCreateUserInput ] object_ identity
 
 
-type alias UpdateArticleRequiredArguments =
-    { input : SAI.InputObject.UpdateArticleInput }
-
-
-{-|
-
-  - input -
-
--}
-updateArticle : UpdateArticleRequiredArguments -> SelectionSet decodesTo SAI.Object.Article -> SelectionSet decodesTo RootMutation
-updateArticle requiredArgs object_ =
-    Object.selectionForCompositeField "updateArticle" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateArticleInput ] object_ identity
-
-
-type alias DeleteArticleRequiredArguments =
-    { id : String }
-
-
-{-|
-
-  - id -
-
--}
-deleteArticle : DeleteArticleRequiredArguments -> SelectionSet String RootMutation
-deleteArticle requiredArgs =
-    Object.selectionForField "String" "deleteArticle" [ Argument.required "id" requiredArgs.id Encode.string ] Decode.string
-
-
-type alias CreateProfileRequiredArguments =
-    { input : SAI.InputObject.CreateProfileInput }
+type alias UpdateUserRequiredArguments =
+    { input : SAI.InputObject.UpdateUserInput }
 
 
 {-|
@@ -182,41 +154,13 @@ type alias CreateProfileRequiredArguments =
   - input -
 
 -}
-createProfile : CreateProfileRequiredArguments -> SelectionSet decodesTo SAI.Object.Profile -> SelectionSet decodesTo RootMutation
-createProfile requiredArgs object_ =
-    Object.selectionForCompositeField "createProfile" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeCreateProfileInput ] object_ identity
+updateUser : UpdateUserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet decodesTo RootMutation
+updateUser requiredArgs object_ =
+    Object.selectionForCompositeField "updateUser" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateUserInput ] object_ identity
 
 
-type alias UpdateProfileRequiredArguments =
-    { input : SAI.InputObject.UpdateProfileInput }
-
-
-{-|
-
-  - input -
-
--}
-updateProfile : UpdateProfileRequiredArguments -> SelectionSet decodesTo SAI.Object.Profile -> SelectionSet decodesTo RootMutation
-updateProfile requiredArgs object_ =
-    Object.selectionForCompositeField "updateProfile" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateProfileInput ] object_ identity
-
-
-type alias DeleteProfileRequiredArguments =
-    { id : String }
-
-
-{-|
-
-  - id -
-
--}
-deleteProfile : DeleteProfileRequiredArguments -> SelectionSet String RootMutation
-deleteProfile requiredArgs =
-    Object.selectionForField "String" "deleteProfile" [ Argument.required "id" requiredArgs.id Encode.string ] Decode.string
-
-
-type alias CreateCommentRequiredArguments =
-    { input : SAI.InputObject.CreateCommentInput }
+type alias DisableUserRequiredArguments =
+    { input : SAI.InputObject.UpdateUserInput }
 
 
 {-|
@@ -224,20 +168,20 @@ type alias CreateCommentRequiredArguments =
   - input -
 
 -}
-createComment : CreateCommentRequiredArguments -> SelectionSet decodesTo SAI.Object.Comment -> SelectionSet decodesTo RootMutation
-createComment requiredArgs object_ =
-    Object.selectionForCompositeField "createComment" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeCreateCommentInput ] object_ identity
+disableUser : DisableUserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet decodesTo RootMutation
+disableUser requiredArgs object_ =
+    Object.selectionForCompositeField "disableUser" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateUserInput ] object_ identity
 
 
-type alias DeleteCommentRequiredArguments =
-    { id : String }
+type alias EnableUserRequiredArguments =
+    { input : SAI.InputObject.UpdateUserInput }
 
 
 {-|
 
-  - id -
+  - input -
 
 -}
-deleteComment : DeleteCommentRequiredArguments -> SelectionSet String RootMutation
-deleteComment requiredArgs =
-    Object.selectionForField "String" "deleteComment" [ Argument.required "id" requiredArgs.id Encode.string ] Decode.string
+enableUser : EnableUserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet decodesTo RootMutation
+enableUser requiredArgs object_ =
+    Object.selectionForCompositeField "enableUser" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateUserInput ] object_ identity

@@ -11,9 +11,10 @@ import Graphql.Operation exposing (RootMutation, RootQuery, RootSubscription)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
+import SAI.Enum.AtentionNeed
 import SAI.Enum.CivilState
-import SAI.Enum.CommitmentLevel
 import SAI.Enum.Gender
+import SAI.Enum.Progress
 import SAI.Enum.SocialCategory
 import SAI.Enum.Status
 import SAI.InputObject
@@ -91,9 +92,9 @@ gender =
 
 
 {-| -}
-birthday : SelectionSet String SAI.Object.Person
-birthday =
-    Object.selectionForField "String" "birthday" [] Decode.string
+birthday : SelectionSet decodesTo SAI.Object.Date -> SelectionSet decodesTo SAI.Object.Person
+birthday object_ =
+    Object.selectionForCompositeField "birthday" [] object_ identity
 
 
 {-| -}
@@ -103,9 +104,15 @@ age =
 
 
 {-| -}
-commitmentLevel : SelectionSet SAI.Enum.CommitmentLevel.CommitmentLevel SAI.Object.Person
-commitmentLevel =
-    Object.selectionForField "Enum.CommitmentLevel.CommitmentLevel" "commitmentLevel" [] SAI.Enum.CommitmentLevel.decoder
+progress : SelectionSet SAI.Enum.Progress.Progress SAI.Object.Person
+progress =
+    Object.selectionForField "Enum.Progress.Progress" "progress" [] SAI.Enum.Progress.decoder
+
+
+{-| -}
+atentionneed : SelectionSet (Maybe SAI.Enum.AtentionNeed.AtentionNeed) SAI.Object.Person
+atentionneed =
+    Object.selectionForField "(Maybe Enum.AtentionNeed.AtentionNeed)" "atentionneed" [] (SAI.Enum.AtentionNeed.decoder |> Decode.nullable)
 
 
 {-| -}

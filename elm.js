@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.aD.bv === region.aO.bv)
+	if (region.aD.bt === region.aN.bt)
 	{
-		return 'on line ' + region.aD.bv;
+		return 'on line ' + region.aD.bt;
 	}
-	return 'on lines ' + region.aD.bv + ' through ' + region.aO.bv;
+	return 'on lines ' + region.aD.bt + ' through ' + region.aN.bt;
 }
 
 
@@ -1894,9 +1894,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bu,
-		impl.bO,
-		impl.bL,
+		impl.bs,
+		impl.bM,
+		impl.bJ,
 		function() { return function() {} }
 	);
 });
@@ -2358,25 +2358,25 @@ var _Http_toTask = F3(function(router, toTask, request)
 	return _Scheduler_binding(function(callback)
 	{
 		function done(response) {
-			callback(toTask(request.R.a(response)));
+			callback(toTask(request.S.a(response)));
 		}
 
 		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('error', function() { done(elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done(elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.R.b, xhr)); });
-		elm$core$Maybe$isJust(request.bc) && _Http_track(router, xhr, request.bc.a);
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.S.b, xhr)); });
+		elm$core$Maybe$isJust(request.bb) && _Http_track(router, xhr, request.bb.a);
 
 		try {
-			xhr.open(request.C, request.F, true);
+			xhr.open(request.D, request.G, true);
 		} catch (e) {
-			return done(elm$http$Http$BadUrl_(request.F));
+			return done(elm$http$Http$BadUrl_(request.G));
 		}
 
 		_Http_configureRequest(xhr, request);
 
-		request.bh.a && xhr.setRequestHeader('Content-Type', request.bh.a);
-		xhr.send(request.bh.b);
+		request.bg.a && xhr.setRequestHeader('Content-Type', request.bg.a);
+		xhr.send(request.bg.b);
 
 		return function() { xhr.c = true; xhr.abort(); };
 	});
@@ -2387,13 +2387,13 @@ var _Http_toTask = F3(function(router, toTask, request)
 
 function _Http_configureRequest(xhr, request)
 {
-	for (var headers = request.h; headers.b; headers = headers.b) // WHILE_CONS
+	for (var headers = request.g; headers.b; headers = headers.b) // WHILE_CONS
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
-	xhr.timeout = request.j.a || 0;
-	xhr.responseType = request.R.d;
-	xhr.withCredentials = request.N;
+	xhr.timeout = request.i.a || 0;
+	xhr.responseType = request.S.d;
+	xhr.withCredentials = request.O;
 }
 
 
@@ -2414,10 +2414,10 @@ function _Http_toResponse(toBody, xhr)
 function _Http_toMetadata(xhr)
 {
 	return {
-		F: xhr.responseURL,
-		bI: xhr.status,
-		bJ: xhr.statusText,
-		h: _Http_parseHeaders(xhr.getAllResponseHeaders())
+		G: xhr.responseURL,
+		bG: xhr.status,
+		bH: xhr.statusText,
+		g: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
 
@@ -2512,14 +2512,14 @@ function _Http_track(router, xhr, tracker)
 	xhr.upload.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2(elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, elm$http$Http$Sending({
-			bH: event.loaded,
+			bF: event.loaded,
 			aB: event.total
 		}))));
 	});
 	xhr.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2(elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, elm$http$Http$Receiving({
-			bE: event.loaded,
+			bC: event.loaded,
 			aB: event.lengthComputable ? elm$core$Maybe$Just(event.total) : elm$core$Maybe$Nothing
 		}))));
 	});
@@ -2532,7 +2532,7 @@ var _Regex_never = /.^/;
 var _Regex_fromStringWith = F2(function(options, string)
 {
 	var flags = 'g';
-	if (options.aX) { flags += 'm'; }
+	if (options.aW) { flags += 'm'; }
 	if (options.aJ) { flags += 'i'; }
 
 	try
@@ -2989,7 +2989,7 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		by: func(record.by),
+		bw: func(record.bw),
 		aE: record.aE,
 		aw: record.aw
 	}
@@ -3259,7 +3259,7 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.by;
+		var message = !tag ? value : tag < 3 ? value.a : value.bw;
 		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.aE;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
@@ -4213,11 +4213,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bu,
-		impl.bO,
-		impl.bL,
+		impl.bs,
+		impl.bM,
+		impl.bJ,
 		function(sendToApp, initialModel) {
-			var view = impl.bP;
+			var view = impl.bN;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -4249,12 +4249,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bu,
-		impl.bO,
-		impl.bL,
+		impl.bs,
+		impl.bM,
+		impl.bJ,
 		function(sendToApp, initialModel) {
 			var divertHrefToApp = impl.ab && impl.ab(sendToApp)
-			var view = impl.bP;
+			var view = impl.bN;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -4262,12 +4262,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.bh);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.bg);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.bM) && (_VirtualDom_doc.title = title = doc.bM);
+				(title !== doc.bK) && (_VirtualDom_doc.title = title = doc.bK);
 			});
 		}
 	);
@@ -4323,8 +4323,8 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.bA;
-	var onUrlRequest = impl.bB;
+	var onUrlChange = impl.by;
+	var onUrlRequest = impl.bz;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
@@ -4344,9 +4344,9 @@ function _Browser_application(impl)
 					var next = elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.a3 === next.a3
-							&& curr.aS === next.aS
-							&& curr.a0.a === next.a0.a
+							&& curr.a2 === next.a2
+							&& curr.aR === next.aR
+							&& curr.a$.a === next.a$.a
 						)
 							? elm$browser$Browser$Internal(next)
 							: elm$browser$Browser$External(href)
@@ -4354,13 +4354,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		bu: function(flags)
+		bs: function(flags)
 		{
-			return A3(impl.bu, flags, _Browser_getUrl(), key);
+			return A3(impl.bs, flags, _Browser_getUrl(), key);
 		},
-		bP: impl.bP,
-		bO: impl.bO,
-		bL: impl.bL
+		bN: impl.bN,
+		bM: impl.bM,
+		bJ: impl.bJ
 	});
 }
 
@@ -4426,17 +4426,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { br: 'hidden', bi: 'visibilitychange' }
+		? { bp: 'hidden', bh: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { br: 'mozHidden', bi: 'mozvisibilitychange' }
+		? { bp: 'mozHidden', bh: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { br: 'msHidden', bi: 'msvisibilitychange' }
+		? { bp: 'msHidden', bh: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { br: 'webkitHidden', bi: 'webkitvisibilitychange' }
-		: { br: 'hidden', bi: 'visibilitychange' };
+		? { bp: 'webkitHidden', bh: 'webkitvisibilitychange' }
+		: { bp: 'hidden', bh: 'visibilitychange' };
 }
 
 
@@ -4517,12 +4517,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		a9: _Browser_getScene(),
-		bd: {
-			ak: _Browser_window.pageXOffset,
-			al: _Browser_window.pageYOffset,
-			ah: _Browser_doc.documentElement.clientWidth,
-			T: _Browser_doc.documentElement.clientHeight
+		a8: _Browser_getScene(),
+		bc: {
+			aj: _Browser_window.pageXOffset,
+			ak: _Browser_window.pageYOffset,
+			ag: _Browser_doc.documentElement.clientWidth,
+			U: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4532,8 +4532,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		ah: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		T: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		ag: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		U: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4556,15 +4556,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			a9: {
-				ah: node.scrollWidth,
-				T: node.scrollHeight
+			a8: {
+				ag: node.scrollWidth,
+				U: node.scrollHeight
 			},
-			bd: {
-				ak: node.scrollLeft,
-				al: node.scrollTop,
-				ah: node.clientWidth,
-				T: node.clientHeight
+			bc: {
+				aj: node.scrollLeft,
+				ak: node.scrollTop,
+				ag: node.clientWidth,
+				U: node.clientHeight
 			}
 		};
 	});
@@ -4594,18 +4594,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			a9: _Browser_getScene(),
-			bd: {
-				ak: x,
-				al: y,
-				ah: _Browser_doc.documentElement.clientWidth,
-				T: _Browser_doc.documentElement.clientHeight
+			a8: _Browser_getScene(),
+			bc: {
+				aj: x,
+				ak: y,
+				ag: _Browser_doc.documentElement.clientWidth,
+				U: _Browser_doc.documentElement.clientHeight
 			},
-			bm: {
-				ak: x + rect.left,
-				al: y + rect.top,
-				ah: rect.width,
-				T: rect.height
+			bk: {
+				aj: x + rect.left,
+				ak: y + rect.top,
+				ag: rect.width,
+				U: rect.height
 			}
 		};
 	});
@@ -4662,13 +4662,13 @@ var author$project$Main$peopleResultToMsg = function (peopeResult) {
 		return author$project$Main$NotGotPeople(peopleError);
 	}
 };
-var author$project$Main$Person = F5(
-	function (name, commitmentLevel, email, phone, address) {
-		return {bf: address, bk: commitmentLevel, bn: email, aY: name, bD: phone};
+var author$project$Main$Person = F4(
+	function (name, email, phone, address) {
+		return {be: address, bl: email, aX: name, bB: phone};
 	});
 var Skinney$murmur3$Murmur3$HashData = F4(
 	function (shift, seed, hash, charsProcessed) {
-		return {P: charsProcessed, S: hash, K: seed, W: shift};
+		return {Q: charsProcessed, T: hash, L: seed, X: shift};
 	});
 var Skinney$murmur3$Murmur3$c1 = 3432918353;
 var Skinney$murmur3$Murmur3$c2 = 461845907;
@@ -4774,14 +4774,14 @@ var elm$core$Basics$apR = F2(
 var elm$core$Basics$neq = _Utils_notEqual;
 var elm$core$Bitwise$xor = _Bitwise_xor;
 var Skinney$murmur3$Murmur3$finalize = function (data) {
-	var acc = data.S ? (data.K ^ A2(
+	var acc = data.T ? (data.L ^ A2(
 		Skinney$murmur3$Murmur3$multiplyBy,
 		Skinney$murmur3$Murmur3$c2,
 		A2(
 			Skinney$murmur3$Murmur3$rotlBy,
 			15,
-			A2(Skinney$murmur3$Murmur3$multiplyBy, Skinney$murmur3$Murmur3$c1, data.S)))) : data.K;
-	var h0 = acc ^ data.P;
+			A2(Skinney$murmur3$Murmur3$multiplyBy, Skinney$murmur3$Murmur3$c1, data.T)))) : data.L;
+	var h0 = acc ^ data.Q;
 	var h1 = A2(Skinney$murmur3$Murmur3$multiplyBy, 2246822507, h0 ^ (h0 >>> 16));
 	var h2 = A2(Skinney$murmur3$Murmur3$multiplyBy, 3266489909, h1 ^ (h1 >>> 13));
 	return (h2 ^ (h2 >>> 16)) >>> 0;
@@ -4805,17 +4805,17 @@ var Skinney$murmur3$Murmur3$mix = F2(
 var elm$core$Char$toCode = _Char_toCode;
 var Skinney$murmur3$Murmur3$hashFold = F2(
 	function (c, data) {
-		var res = data.S | ((255 & elm$core$Char$toCode(c)) << data.W);
-		var _n0 = data.W;
+		var res = data.T | ((255 & elm$core$Char$toCode(c)) << data.X);
+		var _n0 = data.X;
 		if (_n0 === 24) {
 			return {
-				P: data.P + 1,
-				S: 0,
-				K: A2(Skinney$murmur3$Murmur3$mix, data.K, res),
-				W: 0
+				Q: data.Q + 1,
+				T: 0,
+				L: A2(Skinney$murmur3$Murmur3$mix, data.L, res),
+				X: 0
 			};
 		} else {
-			return {P: data.P + 1, S: res, K: data.K, W: data.W + 8};
+			return {Q: data.Q + 1, T: res, L: data.L, X: data.X + 8};
 		}
 	});
 var elm$core$Maybe$Just = function (a) {
@@ -5013,22 +5013,22 @@ var elm$core$Array$builderToArray = F2(
 		if (!builder.b) {
 			return A4(
 				elm$core$Array$Array_elm_builtin,
-				elm$core$Elm$JsArray$length(builder.e),
+				elm$core$Elm$JsArray$length(builder.d),
 				elm$core$Array$shiftStep,
 				elm$core$Elm$JsArray$empty,
-				builder.e);
+				builder.d);
 		} else {
 			var treeLen = builder.b * elm$core$Array$branchFactor;
 			var depth = elm$core$Basics$floor(
 				A2(elm$core$Basics$logBase, elm$core$Array$branchFactor, treeLen - 1));
-			var correctNodeList = reverseNodeList ? elm$core$List$reverse(builder.f) : builder.f;
+			var correctNodeList = reverseNodeList ? elm$core$List$reverse(builder.e) : builder.e;
 			var tree = A2(elm$core$Array$treeFromBuilder, correctNodeList, builder.b);
 			return A4(
 				elm$core$Array$Array_elm_builtin,
-				elm$core$Elm$JsArray$length(builder.e) + treeLen,
+				elm$core$Elm$JsArray$length(builder.d) + treeLen,
 				A2(elm$core$Basics$max, 5, depth * elm$core$Array$shiftStep),
 				tree,
-				builder.e);
+				builder.d);
 		}
 	});
 var elm$core$Basics$False = 1;
@@ -5043,7 +5043,7 @@ var elm$core$Array$initializeHelp = F5(
 				return A2(
 					elm$core$Array$builderToArray,
 					false,
-					{f: nodeList, b: (len / elm$core$Array$branchFactor) | 0, e: tail});
+					{e: nodeList, b: (len / elm$core$Array$branchFactor) | 0, d: tail});
 			} else {
 				var leaf = elm$core$Array$Leaf(
 					A3(elm$core$Elm$JsArray$initialize, elm$core$Array$branchFactor, fromIndex, fn));
@@ -5373,8 +5373,8 @@ var dillonkearns$elm_graphql$Graphql$Document$Field$maybeAliasHash = function (f
 				return elm$core$List$isEmpty(_arguments) ? elm$core$Maybe$Nothing : elm$core$Maybe$Just(
 					dillonkearns$elm_graphql$Graphql$Document$Argument$serialize(_arguments));
 			} else {
-				var typeString = field.a.bN;
-				var fieldName = field.a.aQ;
+				var typeString = field.a.bL;
+				var fieldName = field.a.aP;
 				var _arguments = field.b;
 				return (fieldName === '__typename') ? elm$core$Maybe$Nothing : elm$core$Maybe$Just(
 					elm$core$String$concat(
@@ -5394,8 +5394,8 @@ var dillonkearns$elm_graphql$Graphql$RawField$name = function (field) {
 		var fieldList = field.c;
 		return fieldName;
 	} else {
-		var typeString = field.a.bN;
-		var fieldName = field.a.aQ;
+		var typeString = field.a.bL;
+		var fieldName = field.a.aP;
 		var argumentList = field.b;
 		return fieldName;
 	}
@@ -5442,7 +5442,7 @@ var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField =
 	function (typeString, fieldName, args, decoder) {
 		var newLeaf = A2(
 			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$leaf,
-			{aQ: fieldName, bN: typeString},
+			{aP: fieldName, bL: typeString},
 			args);
 		return A2(
 			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
@@ -5471,37 +5471,6 @@ var author$project$SAI$Object$Person$address = A4(
 	'address',
 	_List_Nil,
 	elm$json$Json$Decode$nullable(elm$json$Json$Decode$string));
-var author$project$SAI$Enum$CommitmentLevel$Commissioned = 5;
-var author$project$SAI$Enum$CommitmentLevel$Committed = 3;
-var author$project$SAI$Enum$CommitmentLevel$Community = 0;
-var author$project$SAI$Enum$CommitmentLevel$Congregation = 2;
-var author$project$SAI$Enum$CommitmentLevel$Core = 4;
-var author$project$SAI$Enum$CommitmentLevel$Crowd = 1;
-var elm$json$Json$Decode$andThen = _Json_andThen;
-var elm$json$Json$Decode$fail = _Json_fail;
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var author$project$SAI$Enum$CommitmentLevel$decoder = A2(
-	elm$json$Json$Decode$andThen,
-	function (string) {
-		switch (string) {
-			case 'COMMUNITY':
-				return elm$json$Json$Decode$succeed(0);
-			case 'CROWD':
-				return elm$json$Json$Decode$succeed(1);
-			case 'CONGREGATION':
-				return elm$json$Json$Decode$succeed(2);
-			case 'COMMITTED':
-				return elm$json$Json$Decode$succeed(3);
-			case 'CORE':
-				return elm$json$Json$Decode$succeed(4);
-			case 'COMMISSIONED':
-				return elm$json$Json$Decode$succeed(5);
-			default:
-				return elm$json$Json$Decode$fail('Invalid CommitmentLevel type, ' + (string + ' try re-running the @dillonkearns/elm-graphql CLI '));
-		}
-	},
-	elm$json$Json$Decode$string);
-var author$project$SAI$Object$Person$commitmentLevel = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Enum.CommitmentLevel.CommitmentLevel', 'commitmentLevel', _List_Nil, author$project$SAI$Enum$CommitmentLevel$decoder);
 var author$project$SAI$Object$Person$email = A4(
 	dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
 	'(Maybe String)',
@@ -5518,9 +5487,9 @@ var author$project$SAI$Object$Person$phone = A4(
 var elm$core$List$concat = function (lists) {
 	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
 };
-var elm$json$Json$Decode$map5 = _Json_map5;
-var dillonkearns$elm_graphql$Graphql$SelectionSet$map5 = F6(
-	function (combine, _n0, _n1, _n2, _n3, _n4) {
+var elm$json$Json$Decode$map4 = _Json_map4;
+var dillonkearns$elm_graphql$Graphql$SelectionSet$map4 = F5(
+	function (combine, _n0, _n1, _n2, _n3) {
 		var selectionFields1 = _n0.a;
 		var selectionDecoder1 = _n0.b;
 		var selectionFields2 = _n1.a;
@@ -5529,16 +5498,14 @@ var dillonkearns$elm_graphql$Graphql$SelectionSet$map5 = F6(
 		var selectionDecoder3 = _n2.b;
 		var selectionFields4 = _n3.a;
 		var selectionDecoder4 = _n3.b;
-		var selectionFields5 = _n4.a;
-		var selectionDecoder5 = _n4.b;
 		return A2(
 			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
 			elm$core$List$concat(
 				_List_fromArray(
-					[selectionFields1, selectionFields2, selectionFields3, selectionFields4, selectionFields5])),
-			A6(elm$json$Json$Decode$map5, combine, selectionDecoder1, selectionDecoder2, selectionDecoder3, selectionDecoder4, selectionDecoder5));
+					[selectionFields1, selectionFields2, selectionFields3, selectionFields4])),
+			A5(elm$json$Json$Decode$map4, combine, selectionDecoder1, selectionDecoder2, selectionDecoder3, selectionDecoder4));
 	});
-var author$project$Main$personSel = A6(dillonkearns$elm_graphql$Graphql$SelectionSet$map5, author$project$Main$Person, author$project$SAI$Object$Person$name, author$project$SAI$Object$Person$commitmentLevel, author$project$SAI$Object$Person$email, author$project$SAI$Object$Person$phone, author$project$SAI$Object$Person$address);
+var author$project$Main$personSel = A5(dillonkearns$elm_graphql$Graphql$SelectionSet$map4, author$project$Main$Person, author$project$SAI$Object$Person$name, author$project$SAI$Object$Person$email, author$project$SAI$Object$Person$phone, author$project$SAI$Object$Person$address);
 var dillonkearns$elm_graphql$Graphql$RawField$Composite = F3(
 	function (a, b, c) {
 		return {$: 0, a: a, b: b, c: c};
@@ -5595,12 +5562,12 @@ var dillonkearns$elm_graphql$Graphql$Http$queryRequest = F2(
 	function (baseUrl, query) {
 		return {
 			aa: baseUrl,
-			ai: A2(dillonkearns$elm_graphql$Graphql$Http$Query, elm$core$Maybe$Nothing, query),
-			R: dillonkearns$elm_graphql$Graphql$Document$decoder(query),
-			h: _List_Nil,
-			J: _List_Nil,
-			j: elm$core$Maybe$Nothing,
-			M: false
+			ah: A2(dillonkearns$elm_graphql$Graphql$Http$Query, elm$core$Maybe$Nothing, query),
+			S: dillonkearns$elm_graphql$Graphql$Document$decoder(query),
+			g: _List_Nil,
+			K: _List_Nil,
+			i: elm$core$Maybe$Nothing,
+			N: false
 		};
 	});
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError = F2(
@@ -6241,7 +6208,7 @@ var dillonkearns$elm_graphql$Graphql$Http$expectJson = F2(
 	});
 var dillonkearns$elm_graphql$Graphql$RawField$typename = A2(
 	dillonkearns$elm_graphql$Graphql$RawField$Leaf,
-	{aQ: '__typename', bN: ''},
+	{aP: '__typename', bL: ''},
 	_List_Nil);
 var dillonkearns$elm_graphql$Graphql$Document$Field$nonemptyChildren = function (children) {
 	return elm$core$List$isEmpty(children) ? A2(elm$core$List$cons, dillonkearns$elm_graphql$Graphql$RawField$typename, children) : children;
@@ -6313,7 +6280,7 @@ var dillonkearns$elm_graphql$Graphql$Document$Field$serialize = F3(
 								children)))) + ('\n' + (dillonkearns$elm_graphql$Graphql$Document$Indent$generate(indentationLevel) + '}')));
 					}
 				} else {
-					var fieldName = field.a.aQ;
+					var fieldName = field.a.aP;
 					var args = field.b;
 					return elm$core$Maybe$Just(
 						_Utils_ap(
@@ -6364,7 +6331,7 @@ var elm$core$Array$fromListHelp = F3(
 				return A2(
 					elm$core$Array$builderToArray,
 					true,
-					{f: nodeList, b: nodeListSize, e: jsArray});
+					{e: nodeList, b: nodeListSize, d: jsArray});
 			} else {
 				var $temp$list = remainingItems,
 					$temp$nodeList = A2(
@@ -6388,7 +6355,7 @@ var elm$core$Array$fromList = function (list) {
 };
 var elm$regex$Regex$Match = F4(
 	function (match, index, number, submatches) {
-		return {bt: index, bx: match, bz: number, bK: submatches};
+		return {br: index, bv: match, bx: number, bI: submatches};
 	});
 var elm$regex$Regex$replace = _Regex_replaceAtMost(_Regex_infinity);
 var elm$core$Array$bitMask = 4294967295 >>> (32 - elm$core$Array$shiftStep);
@@ -6464,7 +6431,7 @@ var elm$core$String$dropRight = F2(
 var elm$core$String$toInt = _String_toInt;
 var lukewestby$elm_string_interpolate$String$Interpolate$applyInterpolation = F2(
 	function (replacements, _n0) {
-		var match = _n0.bx;
+		var match = _n0.bv;
 		var ordinalString = A2(
 			elm$core$Basics$composeL,
 			elm$core$String$dropLeft(1),
@@ -6483,7 +6450,7 @@ var elm$regex$Regex$fromStringWith = _Regex_fromStringWith;
 var elm$regex$Regex$fromString = function (string) {
 	return A2(
 		elm$regex$Regex$fromStringWith,
-		{aJ: false, aX: false},
+		{aJ: false, aW: false},
 		string);
 };
 var elm$regex$Regex$never = _Regex_never;
@@ -6521,11 +6488,11 @@ var dillonkearns$elm_graphql$Graphql$Document$serializeMutation = function (_n0)
 };
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$GraphqlError = F3(
 	function (message, locations, details) {
-		return {ai: details, bw: locations, by: message};
+		return {ah: details, bu: locations, bw: message};
 	});
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$Location = F2(
 	function (line, column) {
-		return {bj: column, bv: line};
+		return {bi: column, bt: line};
 	});
 var elm$json$Json$Decode$int = _Json_decodeInt;
 var elm$json$Json$Decode$map2 = _Json_map2;
@@ -6554,6 +6521,7 @@ var elm$json$Json$Decode$dict = function (decoder) {
 		elm$json$Json$Decode$keyValuePairs(decoder));
 };
 var elm$json$Json$Decode$map3 = _Json_map3;
+var elm$json$Json$Decode$succeed = _Json_succeed;
 var elm$json$Json$Decode$maybe = function (decoder) {
 	return elm$json$Json$Decode$oneOf(
 		_List_fromArray(
@@ -6616,6 +6584,7 @@ var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$ParsedData = function (a)
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$UnparsedData = function (a) {
 	return {$: 1, a: a};
 };
+var elm$json$Json$Decode$andThen = _Json_andThen;
 var dillonkearns$elm_graphql$Graphql$Http$errorDecoder = function (decoder) {
 	return elm$json$Json$Decode$oneOf(
 		_List_fromArray(
@@ -6728,7 +6697,7 @@ var dillonkearns$elm_graphql$Graphql$Http$QueryHelper$build = F4(
 			dillonkearns$elm_graphql$Graphql$Http$QueryHelper$maxLength) > -1) && (!_Utils_eq(
 			forceMethod,
 			elm$core$Maybe$Just(0))))) ? {
-			bh: elm$http$Http$jsonBody(
+			bg: elm$http$Http$jsonBody(
 				elm$json$Json$Encode$object(
 					_List_fromArray(
 						[
@@ -6737,13 +6706,13 @@ var dillonkearns$elm_graphql$Graphql$Http$QueryHelper$build = F4(
 							elm$json$Json$Encode$string(
 								dillonkearns$elm_graphql$Graphql$Document$serializeQuery(queryDocument)))
 						]))),
-			C: 1,
-			F: A2(dillonkearns$elm_graphql$Graphql$Http$QueryParams$urlWithQueryParams, _List_Nil, url)
-		} : {bh: elm$http$Http$emptyBody, C: 0, F: urlForGetRequest};
+			D: 1,
+			G: A2(dillonkearns$elm_graphql$Graphql$Http$QueryParams$urlWithQueryParams, _List_Nil, url)
+		} : {bg: elm$http$Http$emptyBody, D: 0, G: urlForGetRequest};
 	});
 var dillonkearns$elm_graphql$Graphql$Http$toReadyRequest = function (_n0) {
 	var request = _n0;
-	var _n1 = request.ai;
+	var _n1 = request.ah;
 	if (!_n1.$) {
 		var forcedRequestMethod = _n1.a;
 		var querySelectionSet = _n1.b;
@@ -6763,27 +6732,27 @@ var dillonkearns$elm_graphql$Graphql$Http$toReadyRequest = function (_n0) {
 				}
 			}(),
 			request.aa,
-			request.J,
+			request.K,
 			querySelectionSet);
 		return {
-			bh: queryRequestDetails.bh,
-			bl: dillonkearns$elm_graphql$Graphql$Http$decoderOrError(request.R),
-			h: request.h,
-			C: function () {
-				var _n2 = queryRequestDetails.C;
+			bg: queryRequestDetails.bg,
+			bj: dillonkearns$elm_graphql$Graphql$Http$decoderOrError(request.S),
+			g: request.g,
+			D: function () {
+				var _n2 = queryRequestDetails.D;
 				if (!_n2) {
 					return 'GET';
 				} else {
 					return 'Post';
 				}
 			}(),
-			j: request.j,
-			F: queryRequestDetails.F
+			i: request.i,
+			G: queryRequestDetails.G
 		};
 	} else {
 		var mutationSelectionSet = _n1.a;
 		return {
-			bh: elm$http$Http$jsonBody(
+			bg: elm$http$Http$jsonBody(
 				elm$json$Json$Encode$object(
 					_List_fromArray(
 						[
@@ -6792,11 +6761,11 @@ var dillonkearns$elm_graphql$Graphql$Http$toReadyRequest = function (_n0) {
 							elm$json$Json$Encode$string(
 								dillonkearns$elm_graphql$Graphql$Document$serializeMutation(mutationSelectionSet)))
 						]))),
-			bl: dillonkearns$elm_graphql$Graphql$Http$decoderOrError(request.R),
-			h: request.h,
-			C: 'POST',
-			j: request.j,
-			F: A2(dillonkearns$elm_graphql$Graphql$Http$QueryParams$urlWithQueryParams, request.J, request.aa)
+			bj: dillonkearns$elm_graphql$Graphql$Http$decoderOrError(request.S),
+			g: request.g,
+			D: 'POST',
+			i: request.i,
+			G: A2(dillonkearns$elm_graphql$Graphql$Http$QueryParams$urlWithQueryParams, request.K, request.aa)
 		};
 	}
 };
@@ -6805,16 +6774,16 @@ var dillonkearns$elm_graphql$Graphql$Http$toHttpRequestRecord = F2(
 		var request = fullRequest;
 		return function (readyRequest) {
 			return {
-				bh: readyRequest.bh,
-				R: A2(
+				bg: readyRequest.bg,
+				S: A2(
 					dillonkearns$elm_graphql$Graphql$Http$expectJson,
 					A2(elm$core$Basics$composeR, dillonkearns$elm_graphql$Graphql$Http$convertResult, resultToMessage),
-					readyRequest.bl),
-				h: readyRequest.h,
-				C: readyRequest.C,
-				j: readyRequest.j,
-				bc: elm$core$Maybe$Nothing,
-				F: readyRequest.F
+					readyRequest.bj),
+				g: readyRequest.g,
+				D: readyRequest.D,
+				i: readyRequest.i,
+				bb: elm$core$Maybe$Nothing,
+				G: readyRequest.G
 			};
 		}(
 			dillonkearns$elm_graphql$Graphql$Http$toReadyRequest(fullRequest));
@@ -6825,7 +6794,7 @@ var elm$http$Http$Request = function (a) {
 var elm$core$Task$succeed = _Scheduler_succeed;
 var elm$http$Http$State = F2(
 	function (reqs, subs) {
-		return {a6: reqs, ba: subs};
+		return {a5: reqs, a9: subs};
 	});
 var elm$http$Http$init = elm$core$Task$succeed(
 	A2(elm$http$Http$State, elm$core$Dict$empty, _List_Nil));
@@ -6870,7 +6839,7 @@ var elm$http$Http$updateReqs = F3(
 					return A2(
 						elm$core$Task$andThen,
 						function (pid) {
-							var _n4 = req.bc;
+							var _n4 = req.bb;
 							if (_n4.$ === 1) {
 								return A3(elm$http$Http$updateReqs, router, otherCmds, reqs);
 							} else {
@@ -6900,7 +6869,7 @@ var elm$http$Http$onEffects = F4(
 				return elm$core$Task$succeed(
 					A2(elm$http$Http$State, reqs, subs));
 			},
-			A3(elm$http$Http$updateReqs, router, cmds, state.a6));
+			A3(elm$http$Http$updateReqs, router, cmds, state.a5));
 	});
 var elm$core$Task$map2 = F3(
 	function (func, taskA, taskB) {
@@ -6947,7 +6916,7 @@ var elm$http$Http$onSelfMsg = F3(
 				A2(
 					elm$core$List$filterMap,
 					A3(elm$http$Http$maybeSend, router, tracker, progress),
-					state.ba)));
+					state.a9)));
 	});
 var elm$http$Http$Cancel = function (a) {
 	return {$: 0, a: a};
@@ -6961,14 +6930,14 @@ var elm$http$Http$cmdMap = F2(
 			var r = cmd.a;
 			return elm$http$Http$Request(
 				{
-					N: r.N,
-					bh: r.bh,
-					R: A2(_Http_mapExpect, func, r.R),
-					h: r.h,
-					C: r.C,
-					j: r.j,
-					bc: r.bc,
-					F: r.F
+					O: r.O,
+					bg: r.bg,
+					S: A2(_Http_mapExpect, func, r.S),
+					g: r.g,
+					D: r.D,
+					i: r.i,
+					bb: r.bb,
+					G: r.G
 				});
 		}
 	});
@@ -6991,17 +6960,17 @@ var elm$http$Http$subscription = _Platform_leaf('Http');
 var elm$http$Http$request = function (r) {
 	return elm$http$Http$command(
 		elm$http$Http$Request(
-			{N: false, bh: r.bh, R: r.R, h: r.h, C: r.C, j: r.j, bc: r.bc, F: r.F}));
+			{O: false, bg: r.bg, S: r.S, g: r.g, D: r.D, i: r.i, bb: r.bb, G: r.G}));
 };
 var elm$http$Http$riskyRequest = function (r) {
 	return elm$http$Http$command(
 		elm$http$Http$Request(
-			{N: true, bh: r.bh, R: r.R, h: r.h, C: r.C, j: r.j, bc: r.bc, F: r.F}));
+			{O: true, bg: r.bg, S: r.S, g: r.g, D: r.D, i: r.i, bb: r.bb, G: r.G}));
 };
 var dillonkearns$elm_graphql$Graphql$Http$send = F2(
 	function (resultToMessage, fullRequest) {
 		var request = fullRequest;
-		return (request.M ? elm$http$Http$riskyRequest : elm$http$Http$request)(
+		return (request.N ? elm$http$Http$riskyRequest : elm$http$Http$request)(
 			A2(dillonkearns$elm_graphql$Graphql$Http$toHttpRequestRecord, resultToMessage, fullRequest));
 	});
 var author$project$Session$queryReq = F3(
@@ -7053,7 +7022,7 @@ var elm$browser$Browser$AnimationManager$Time = function (a) {
 };
 var elm$browser$Browser$AnimationManager$State = F3(
 	function (subs, request, oldTime) {
-		return {au: oldTime, a7: request, ba: subs};
+		return {au: oldTime, a6: request, a9: subs};
 	});
 var elm$browser$Browser$AnimationManager$init = elm$core$Task$succeed(
 	A3(elm$browser$Browser$AnimationManager$State, _List_Nil, elm$core$Maybe$Nothing, 0));
@@ -7149,7 +7118,7 @@ var elm$core$String$left = F2(
 var elm$core$String$contains = _String_contains;
 var elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {aR: fragment, aS: host, a_: path, a0: port_, a3: protocol, a4: query};
+		return {aQ: fragment, aR: host, aZ: path, a$: port_, a2: protocol, a3: query};
 	});
 var elm$url$Url$chompBeforePath = F5(
 	function (protocol, path, params, frag, str) {
@@ -7257,7 +7226,7 @@ var elm$browser$Browser$AnimationManager$now = _Browser_now(0);
 var elm$browser$Browser$AnimationManager$rAF = _Browser_rAF(0);
 var elm$browser$Browser$AnimationManager$onEffects = F3(
 	function (router, subs, _n0) {
-		var request = _n0.a7;
+		var request = _n0.a6;
 		var oldTime = _n0.au;
 		var _n1 = _Utils_Tuple2(request, subs);
 		if (_n1.a.$ === 1) {
@@ -7304,7 +7273,7 @@ var elm$browser$Browser$AnimationManager$onEffects = F3(
 	});
 var elm$browser$Browser$AnimationManager$onSelfMsg = F3(
 	function (router, newTime, _n0) {
-		var subs = _n0.ba;
+		var subs = _n0.a9;
 		var oldTime = _n0.au;
 		var send = function (sub) {
 			if (!sub.$) {
@@ -7443,7 +7412,7 @@ var author$project$Main$stringErrorView = elm$html$Html$text;
 var author$project$Main$graphqlErrorView = A2(
 	elm$core$Basics$composeR,
 	function ($) {
-		return $.by;
+		return $.bw;
 	},
 	author$project$Main$stringErrorView);
 var elm$core$Result$toMaybe = function (result) {
@@ -7470,7 +7439,7 @@ var author$project$Main$httpErrorString = function (err) {
 			var bodyString = err.b;
 			return A2(
 				elm$core$Maybe$withDefault,
-				elm$core$String$fromInt(resp.bI) + (' ' + resp.bJ),
+				elm$core$String$fromInt(resp.bG) + (' ' + resp.bH),
 				author$project$Main$parseError(bodyString));
 		case 4:
 			var text = err.a;
@@ -7502,7 +7471,7 @@ var author$project$Main$personView = function (person) {
 			[
 				elm$html$Html$text(
 				function ($) {
-					return $.aY;
+					return $.aX;
 				}(person))
 			]));
 };
@@ -7522,17 +7491,17 @@ var damienklinnert$elm_spinner$Spinner$defaultConfig = {
 	ap: 0,
 	ar: false,
 	as: 28,
-	y: 13,
+	z: 13,
 	av: 0.25,
 	ax: 42,
 	az: 0,
 	aA: 1,
-	aj: true,
+	ai: true,
 	aC: 1,
 	aF: 60,
 	aG: 50,
 	aH: 50,
-	ah: 14
+	ag: 14
 };
 var elm$core$Basics$round = _Basics_round;
 var elm$core$String$fromFloat = _String_fromNumber;
@@ -7571,14 +7540,14 @@ var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var damienklinnert$elm_spinner$Spinner$barStyles = F3(
 	function (cfg, time, n) {
-		var scaledTrail = elm$core$Basics$ceiling((cfg.y * cfg.aF) / 100);
+		var scaledTrail = elm$core$Basics$ceiling((cfg.z * cfg.aF) / 100);
 		var fullBlinkTime = 1000 / cfg.aC;
-		var movePerLight = ((n / cfg.y) * fullBlinkTime) | 0;
+		var movePerLight = ((n / cfg.z) * fullBlinkTime) | 0;
 		var lineOpacity = A2(elm$core$Basics$modBy, fullBlinkTime | 0, 1000 - ((time | 0) + movePerLight)) / 1000;
-		var trailedOpacity = A2(elm$core$Basics$max, 0, (cfg.y * lineOpacity) - (cfg.y - scaledTrail)) / scaledTrail;
-		var directionBasedDeg = (!cfg.ap) ? (cfg.y - n) : n;
-		var deg = elm$core$String$fromFloat(((360 / cfg.y) * directionBasedDeg) + cfg.az);
-		var borderRadius = (cfg.ao * cfg.ah) / 2;
+		var trailedOpacity = A2(elm$core$Basics$max, 0, (cfg.z * lineOpacity) - (cfg.z - scaledTrail)) / scaledTrail;
+		var directionBasedDeg = (!cfg.ap) ? (cfg.z - n) : n;
+		var deg = elm$core$String$fromFloat(((360 / cfg.z) * directionBasedDeg) + cfg.az);
+		var borderRadius = (cfg.ao * cfg.ag) / 2;
 		var baseLinedOpacity = elm$core$String$fromFloat(
 			A2(elm$core$Basics$max, cfg.av, trailedOpacity));
 		return _List_fromArray(
@@ -7591,11 +7560,11 @@ var damienklinnert$elm_spinner$Spinner$barStyles = F3(
 				A2(
 				elm$html$Html$Attributes$style,
 				'height',
-				elm$core$String$fromFloat(cfg.ah) + 'px'),
+				elm$core$String$fromFloat(cfg.ag) + 'px'),
 				A2(
 				elm$html$Html$Attributes$style,
 				'width',
-				elm$core$String$fromFloat(cfg.as + cfg.ah) + 'px'),
+				elm$core$String$fromFloat(cfg.as + cfg.ag) + 'px'),
 				A2(elm$html$Html$Attributes$style, 'position', 'absolute'),
 				A2(elm$html$Html$Attributes$style, 'transform-origin', 'left'),
 				A2(
@@ -7610,11 +7579,11 @@ var damienklinnert$elm_spinner$Spinner$barStyles = F3(
 				A2(
 				elm$html$Html$Attributes$style,
 				'box-shadow',
-				cfg.aj ? '0 0 4px #000' : 'none'),
+				cfg.ai ? '0 0 4px #000' : 'none'),
 				A2(
 				elm$html$Html$Attributes$style,
 				'-webkit-box-shadow',
-				cfg.aj ? '0 0 4px #000' : 'none')
+				cfg.ai ? '0 0 4px #000' : 'none')
 			]);
 	});
 var damienklinnert$elm_spinner$Spinner$outerStyle = function (cfg) {
@@ -7648,7 +7617,7 @@ var damienklinnert$elm_spinner$Spinner$view = F2(
 			A2(
 				elm$core$List$range,
 				0,
-				elm$core$Basics$floor(cfg.y) - 1));
+				elm$core$Basics$floor(cfg.z) - 1));
 		var floatTime = elm$time$Time$posixToMillis(time);
 		return A2(
 			elm$html$Html$div,
@@ -7697,11 +7666,11 @@ var author$project$Main$bodyView = function (_n0) {
 };
 var author$project$Main$view = function (model) {
 	return {
-		bh: author$project$Main$bodyView(model),
-		bM: 'People | SAI'
+		bg: author$project$Main$bodyView(model),
+		bK: 'People | SAI'
 	};
 };
 var elm$browser$Browser$document = _Browser_document;
 var author$project$Main$main = elm$browser$Browser$document(
-	{bu: author$project$Main$init, bL: author$project$Main$subscriptions, bO: author$project$Main$update, bP: author$project$Main$view});
+	{bs: author$project$Main$init, bJ: author$project$Main$subscriptions, bM: author$project$Main$update, bN: author$project$Main$view});
 _Platform_export({'Main':{'init':author$project$Main$main(elm$json$Json$Decode$value)(0)}});}(this));

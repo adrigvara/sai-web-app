@@ -10,74 +10,16 @@ import Graphql.Internal.Encode as Encode exposing (Value)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
+import SAI.Enum.AtentionNeed
 import SAI.Enum.CivilState
-import SAI.Enum.CommitmentLevel
 import SAI.Enum.Gender
-import SAI.Enum.SocialCategory
+import SAI.Enum.Progress
 import SAI.Enum.Status
 import SAI.Interface
 import SAI.Object
 import SAI.Scalar
 import SAI.ScalarCodecs
 import SAI.Union
-
-
-buildCreateArticleInput : CreateArticleInputRequiredFields -> CreateArticleInput
-buildCreateArticleInput required =
-    { title = required.title, text = required.text, authorId = required.authorId }
-
-
-type alias CreateArticleInputRequiredFields =
-    { title : String
-    , text : String
-    , authorId : String
-    }
-
-
-{-| Type for the CreateArticleInput input object.
--}
-type alias CreateArticleInput =
-    { title : String
-    , text : String
-    , authorId : String
-    }
-
-
-{-| Encode a CreateArticleInput into a value that can be used as an argument.
--}
-encodeCreateArticleInput : CreateArticleInput -> Value
-encodeCreateArticleInput input =
-    Encode.maybeObject
-        [ ( "title", Encode.string input.title |> Just ), ( "text", Encode.string input.text |> Just ), ( "authorId", Encode.string input.authorId |> Just ) ]
-
-
-buildCreateCommentInput : CreateCommentInputRequiredFields -> CreateCommentInput
-buildCreateCommentInput required =
-    { text = required.text, authorId = required.authorId, articleId = required.articleId }
-
-
-type alias CreateCommentInputRequiredFields =
-    { text : String
-    , authorId : String
-    , articleId : String
-    }
-
-
-{-| Type for the CreateCommentInput input object.
--}
-type alias CreateCommentInput =
-    { text : String
-    , authorId : String
-    , articleId : String
-    }
-
-
-{-| Encode a CreateCommentInput into a value that can be used as an argument.
--}
-encodeCreateCommentInput : CreateCommentInput -> Value
-encodeCreateCommentInput input =
-    Encode.maybeObject
-        [ ( "text", Encode.string input.text |> Just ), ( "authorId", Encode.string input.authorId |> Just ), ( "articleId", Encode.string input.articleId |> Just ) ]
 
 
 buildCreateGroupInput : CreateGroupInputRequiredFields -> (CreateGroupInputOptionalFields -> CreateGroupInputOptionalFields) -> CreateGroupInput
@@ -122,30 +64,28 @@ buildCreatePersonInput required fillOptionals =
     let
         optionals =
             fillOptionals
-                { phone = Absent, socialCategory = Absent, age = Absent, status = Absent }
+                { phone = Absent, progress = Absent, atentionneed = Absent, status = Absent }
     in
-    { name = required.name, lastName = required.lastName, fullName = required.fullName, email = required.email, address = required.address, phone = optionals.phone, baptized = required.baptized, socialCategory = optionals.socialCategory, civilState = required.civilState, gender = required.gender, birthday = required.birthday, age = optionals.age, commitmentLevel = required.commitmentLevel, church = required.church, status = optionals.status }
+    { name = required.name, lastName = required.lastName, email = required.email, address = required.address, phone = optionals.phone, baptized = required.baptized, civilState = required.civilState, gender = required.gender, birthday = required.birthday, progress = optionals.progress, atentionneed = optionals.atentionneed, church = required.church, status = optionals.status }
 
 
 type alias CreatePersonInputRequiredFields =
     { name : String
     , lastName : String
-    , fullName : String
     , email : String
     , address : String
     , baptized : String
     , civilState : SAI.Enum.CivilState.CivilState
     , gender : SAI.Enum.Gender.Gender
     , birthday : String
-    , commitmentLevel : SAI.Enum.CommitmentLevel.CommitmentLevel
     , church : String
     }
 
 
 type alias CreatePersonInputOptionalFields =
     { phone : OptionalArgument String
-    , socialCategory : OptionalArgument SAI.Enum.SocialCategory.SocialCategory
-    , age : OptionalArgument Int
+    , progress : OptionalArgument SAI.Enum.Progress.Progress
+    , atentionneed : OptionalArgument SAI.Enum.AtentionNeed.AtentionNeed
     , status : OptionalArgument SAI.Enum.Status.Status
     }
 
@@ -155,17 +95,15 @@ type alias CreatePersonInputOptionalFields =
 type alias CreatePersonInput =
     { name : String
     , lastName : String
-    , fullName : String
     , email : String
     , address : String
     , phone : OptionalArgument String
     , baptized : String
-    , socialCategory : OptionalArgument SAI.Enum.SocialCategory.SocialCategory
     , civilState : SAI.Enum.CivilState.CivilState
     , gender : SAI.Enum.Gender.Gender
     , birthday : String
-    , age : OptionalArgument Int
-    , commitmentLevel : SAI.Enum.CommitmentLevel.CommitmentLevel
+    , progress : OptionalArgument SAI.Enum.Progress.Progress
+    , atentionneed : OptionalArgument SAI.Enum.AtentionNeed.AtentionNeed
     , church : String
     , status : OptionalArgument SAI.Enum.Status.Status
     }
@@ -176,70 +114,51 @@ type alias CreatePersonInput =
 encodeCreatePersonInput : CreatePersonInput -> Value
 encodeCreatePersonInput input =
     Encode.maybeObject
-        [ ( "name", Encode.string input.name |> Just ), ( "lastName", Encode.string input.lastName |> Just ), ( "fullName", Encode.string input.fullName |> Just ), ( "email", Encode.string input.email |> Just ), ( "address", Encode.string input.address |> Just ), ( "phone", Encode.string |> Encode.optional input.phone ), ( "baptized", Encode.string input.baptized |> Just ), ( "socialCategory", Encode.enum SAI.Enum.SocialCategory.toString |> Encode.optional input.socialCategory ), ( "civilState", Encode.enum SAI.Enum.CivilState.toString input.civilState |> Just ), ( "gender", Encode.enum SAI.Enum.Gender.toString input.gender |> Just ), ( "birthday", Encode.string input.birthday |> Just ), ( "age", Encode.int |> Encode.optional input.age ), ( "commitmentLevel", Encode.enum SAI.Enum.CommitmentLevel.toString input.commitmentLevel |> Just ), ( "church", Encode.string input.church |> Just ), ( "status", Encode.enum SAI.Enum.Status.toString |> Encode.optional input.status ) ]
+        [ ( "name", Encode.string input.name |> Just ), ( "lastName", Encode.string input.lastName |> Just ), ( "email", Encode.string input.email |> Just ), ( "address", Encode.string input.address |> Just ), ( "phone", Encode.string |> Encode.optional input.phone ), ( "baptized", Encode.string input.baptized |> Just ), ( "civilState", Encode.enum SAI.Enum.CivilState.toString input.civilState |> Just ), ( "gender", Encode.enum SAI.Enum.Gender.toString input.gender |> Just ), ( "birthday", Encode.string input.birthday |> Just ), ( "progress", Encode.enum SAI.Enum.Progress.toString |> Encode.optional input.progress ), ( "atentionneed", Encode.enum SAI.Enum.AtentionNeed.toString |> Encode.optional input.atentionneed ), ( "church", Encode.string input.church |> Just ), ( "status", Encode.enum SAI.Enum.Status.toString |> Encode.optional input.status ) ]
 
 
-buildCreateProfileInput : CreateProfileInputRequiredFields -> (CreateProfileInputOptionalFields -> CreateProfileInputOptionalFields) -> CreateProfileInput
-buildCreateProfileInput required fillOptionals =
+buildCreateUserInput : CreateUserInputRequiredFields -> (CreateUserInputOptionalFields -> CreateUserInputOptionalFields) -> CreateUserInput
+buildCreateUserInput required fillOptionals =
     let
         optionals =
             fillOptionals
-                { bio = Absent }
+                { group = Absent, person = Absent, status = Absent }
     in
-    { username = required.username, bio = optionals.bio }
+    { username = required.username, password = required.password, levelaccess = required.levelaccess, group = optionals.group, person = optionals.person, status = optionals.status }
 
 
-type alias CreateProfileInputRequiredFields =
-    { username : String }
-
-
-type alias CreateProfileInputOptionalFields =
-    { bio : OptionalArgument String }
-
-
-{-| Type for the CreateProfileInput input object.
--}
-type alias CreateProfileInput =
+type alias CreateUserInputRequiredFields =
     { username : String
-    , bio : OptionalArgument String
+    , password : String
+    , levelaccess : String
     }
 
 
-{-| Encode a CreateProfileInput into a value that can be used as an argument.
+type alias CreateUserInputOptionalFields =
+    { group : OptionalArgument String
+    , person : OptionalArgument String
+    , status : OptionalArgument SAI.Enum.Status.Status
+    }
+
+
+{-| Type for the CreateUserInput input object.
 -}
-encodeCreateProfileInput : CreateProfileInput -> Value
-encodeCreateProfileInput input =
+type alias CreateUserInput =
+    { username : String
+    , password : String
+    , levelaccess : String
+    , group : OptionalArgument String
+    , person : OptionalArgument String
+    , status : OptionalArgument SAI.Enum.Status.Status
+    }
+
+
+{-| Encode a CreateUserInput into a value that can be used as an argument.
+-}
+encodeCreateUserInput : CreateUserInput -> Value
+encodeCreateUserInput input =
     Encode.maybeObject
-        [ ( "username", Encode.string input.username |> Just ), ( "bio", Encode.string |> Encode.optional input.bio ) ]
-
-
-buildUpdateArticleInput : UpdateArticleInputRequiredFields -> UpdateArticleInput
-buildUpdateArticleInput required =
-    { id = required.id, title = required.title, text = required.text }
-
-
-type alias UpdateArticleInputRequiredFields =
-    { id : String
-    , title : String
-    , text : String
-    }
-
-
-{-| Type for the UpdateArticleInput input object.
--}
-type alias UpdateArticleInput =
-    { id : String
-    , title : String
-    , text : String
-    }
-
-
-{-| Encode a UpdateArticleInput into a value that can be used as an argument.
--}
-encodeUpdateArticleInput : UpdateArticleInput -> Value
-encodeUpdateArticleInput input =
-    Encode.maybeObject
-        [ ( "id", Encode.string input.id |> Just ), ( "title", Encode.string input.title |> Just ), ( "text", Encode.string input.text |> Just ) ]
+        [ ( "username", Encode.string input.username |> Just ), ( "password", Encode.string input.password |> Just ), ( "levelaccess", Encode.string input.levelaccess |> Just ), ( "group", Encode.string |> Encode.optional input.group ), ( "person", Encode.string |> Encode.optional input.person ), ( "status", Encode.enum SAI.Enum.Status.toString |> Encode.optional input.status ) ]
 
 
 buildUpdateGroupInput : UpdateGroupInputRequiredFields -> (UpdateGroupInputOptionalFields -> UpdateGroupInputOptionalFields) -> UpdateGroupInput
@@ -284,9 +203,9 @@ buildUpdatePersonInput required fillOptionals =
     let
         optionals =
             fillOptionals
-                { name = Absent, lastName = Absent, fullName = Absent, email = Absent, address = Absent, phone = Absent, baptized = Absent, socialCategory = Absent, civilState = Absent, gender = Absent, birthday = Absent, age = Absent, commitmentLevel = Absent, church = Absent, status = Absent }
+                { name = Absent, lastName = Absent, email = Absent, address = Absent, phone = Absent, baptized = Absent, civilState = Absent, gender = Absent, birthday = Absent, progress = Absent, atentionneed = Absent, church = Absent, status = Absent }
     in
-    { id = required.id, name = optionals.name, lastName = optionals.lastName, fullName = optionals.fullName, email = optionals.email, address = optionals.address, phone = optionals.phone, baptized = optionals.baptized, socialCategory = optionals.socialCategory, civilState = optionals.civilState, gender = optionals.gender, birthday = optionals.birthday, age = optionals.age, commitmentLevel = optionals.commitmentLevel, church = optionals.church, status = optionals.status }
+    { id = required.id, name = optionals.name, lastName = optionals.lastName, email = optionals.email, address = optionals.address, phone = optionals.phone, baptized = optionals.baptized, civilState = optionals.civilState, gender = optionals.gender, birthday = optionals.birthday, progress = optionals.progress, atentionneed = optionals.atentionneed, church = optionals.church, status = optionals.status }
 
 
 type alias UpdatePersonInputRequiredFields =
@@ -296,17 +215,15 @@ type alias UpdatePersonInputRequiredFields =
 type alias UpdatePersonInputOptionalFields =
     { name : OptionalArgument String
     , lastName : OptionalArgument String
-    , fullName : OptionalArgument String
     , email : OptionalArgument String
     , address : OptionalArgument String
     , phone : OptionalArgument String
     , baptized : OptionalArgument String
-    , socialCategory : OptionalArgument SAI.Enum.SocialCategory.SocialCategory
     , civilState : OptionalArgument SAI.Enum.CivilState.CivilState
     , gender : OptionalArgument SAI.Enum.Gender.Gender
     , birthday : OptionalArgument String
-    , age : OptionalArgument Int
-    , commitmentLevel : OptionalArgument SAI.Enum.CommitmentLevel.CommitmentLevel
+    , progress : OptionalArgument SAI.Enum.Progress.Progress
+    , atentionneed : OptionalArgument SAI.Enum.AtentionNeed.AtentionNeed
     , church : OptionalArgument String
     , status : OptionalArgument SAI.Enum.Status.Status
     }
@@ -318,17 +235,15 @@ type alias UpdatePersonInput =
     { id : SAI.ScalarCodecs.Id
     , name : OptionalArgument String
     , lastName : OptionalArgument String
-    , fullName : OptionalArgument String
     , email : OptionalArgument String
     , address : OptionalArgument String
     , phone : OptionalArgument String
     , baptized : OptionalArgument String
-    , socialCategory : OptionalArgument SAI.Enum.SocialCategory.SocialCategory
     , civilState : OptionalArgument SAI.Enum.CivilState.CivilState
     , gender : OptionalArgument SAI.Enum.Gender.Gender
     , birthday : OptionalArgument String
-    , age : OptionalArgument Int
-    , commitmentLevel : OptionalArgument SAI.Enum.CommitmentLevel.CommitmentLevel
+    , progress : OptionalArgument SAI.Enum.Progress.Progress
+    , atentionneed : OptionalArgument SAI.Enum.AtentionNeed.AtentionNeed
     , church : OptionalArgument String
     , status : OptionalArgument SAI.Enum.Status.Status
     }
@@ -339,38 +254,48 @@ type alias UpdatePersonInput =
 encodeUpdatePersonInput : UpdatePersonInput -> Value
 encodeUpdatePersonInput input =
     Encode.maybeObject
-        [ ( "id", (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) input.id |> Just ), ( "name", Encode.string |> Encode.optional input.name ), ( "lastName", Encode.string |> Encode.optional input.lastName ), ( "fullName", Encode.string |> Encode.optional input.fullName ), ( "email", Encode.string |> Encode.optional input.email ), ( "address", Encode.string |> Encode.optional input.address ), ( "phone", Encode.string |> Encode.optional input.phone ), ( "baptized", Encode.string |> Encode.optional input.baptized ), ( "socialCategory", Encode.enum SAI.Enum.SocialCategory.toString |> Encode.optional input.socialCategory ), ( "civilState", Encode.enum SAI.Enum.CivilState.toString |> Encode.optional input.civilState ), ( "gender", Encode.enum SAI.Enum.Gender.toString |> Encode.optional input.gender ), ( "birthday", Encode.string |> Encode.optional input.birthday ), ( "age", Encode.int |> Encode.optional input.age ), ( "commitmentLevel", Encode.enum SAI.Enum.CommitmentLevel.toString |> Encode.optional input.commitmentLevel ), ( "church", Encode.string |> Encode.optional input.church ), ( "status", Encode.enum SAI.Enum.Status.toString |> Encode.optional input.status ) ]
+        [ ( "id", (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) input.id |> Just ), ( "name", Encode.string |> Encode.optional input.name ), ( "lastName", Encode.string |> Encode.optional input.lastName ), ( "email", Encode.string |> Encode.optional input.email ), ( "address", Encode.string |> Encode.optional input.address ), ( "phone", Encode.string |> Encode.optional input.phone ), ( "baptized", Encode.string |> Encode.optional input.baptized ), ( "civilState", Encode.enum SAI.Enum.CivilState.toString |> Encode.optional input.civilState ), ( "gender", Encode.enum SAI.Enum.Gender.toString |> Encode.optional input.gender ), ( "birthday", Encode.string |> Encode.optional input.birthday ), ( "progress", Encode.enum SAI.Enum.Progress.toString |> Encode.optional input.progress ), ( "atentionneed", Encode.enum SAI.Enum.AtentionNeed.toString |> Encode.optional input.atentionneed ), ( "church", Encode.string |> Encode.optional input.church ), ( "status", Encode.enum SAI.Enum.Status.toString |> Encode.optional input.status ) ]
 
 
-buildUpdateProfileInput : UpdateProfileInputRequiredFields -> (UpdateProfileInputOptionalFields -> UpdateProfileInputOptionalFields) -> UpdateProfileInput
-buildUpdateProfileInput required fillOptionals =
+buildUpdateUserInput : UpdateUserInputRequiredFields -> (UpdateUserInputOptionalFields -> UpdateUserInputOptionalFields) -> UpdateUserInput
+buildUpdateUserInput required fillOptionals =
     let
         optionals =
             fillOptionals
-                { bio = Absent }
+                { group = Absent, person = Absent }
     in
-    { id = required.id, bio = optionals.bio }
+    { id = required.id, username = required.username, password = required.password, levelaccess = required.levelaccess, group = optionals.group, person = optionals.person }
 
 
-type alias UpdateProfileInputRequiredFields =
-    { id : String }
-
-
-type alias UpdateProfileInputOptionalFields =
-    { bio : OptionalArgument String }
-
-
-{-| Type for the UpdateProfileInput input object.
--}
-type alias UpdateProfileInput =
-    { id : String
-    , bio : OptionalArgument String
+type alias UpdateUserInputRequiredFields =
+    { id : SAI.ScalarCodecs.Id
+    , username : String
+    , password : String
+    , levelaccess : String
     }
 
 
-{-| Encode a UpdateProfileInput into a value that can be used as an argument.
+type alias UpdateUserInputOptionalFields =
+    { group : OptionalArgument String
+    , person : OptionalArgument String
+    }
+
+
+{-| Type for the UpdateUserInput input object.
 -}
-encodeUpdateProfileInput : UpdateProfileInput -> Value
-encodeUpdateProfileInput input =
+type alias UpdateUserInput =
+    { id : SAI.ScalarCodecs.Id
+    , username : String
+    , password : String
+    , levelaccess : String
+    , group : OptionalArgument String
+    , person : OptionalArgument String
+    }
+
+
+{-| Encode a UpdateUserInput into a value that can be used as an argument.
+-}
+encodeUpdateUserInput : UpdateUserInput -> Value
+encodeUpdateUserInput input =
     Encode.maybeObject
-        [ ( "id", Encode.string input.id |> Just ), ( "bio", Encode.string |> Encode.optional input.bio ) ]
+        [ ( "id", (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) input.id |> Just ), ( "username", Encode.string input.username |> Just ), ( "password", Encode.string input.password |> Just ), ( "levelaccess", Encode.string input.levelaccess |> Just ), ( "group", Encode.string |> Encode.optional input.group ), ( "person", Encode.string |> Encode.optional input.person ) ]
