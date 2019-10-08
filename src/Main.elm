@@ -157,25 +157,10 @@ errorView : Http.Error x -> List (Html Msg)
 errorView error =
     case error of
         Http.GraphqlError _ graphqlErrors ->
-            List.map graphqlErrorView graphqlErrors
+            List.map (.message >> Html.text) graphqlErrors
 
         Http.HttpError httpError ->
-            [ httpErrorView httpError ]
-
-
-graphqlErrorView : GraphqlError -> Html Msg
-graphqlErrorView =
-    .message >> stringErrorView
-
-
-httpErrorView : Http.HttpError -> Html Msg
-httpErrorView =
-    httpErrorString >> stringErrorView
-
-
-stringErrorView : String -> Html Msg
-stringErrorView =
-    Html.text
+            [ httpError |> httpErrorString |> Html.text ]
 
 
 httpErrorString : Http.HttpError -> String

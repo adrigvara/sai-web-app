@@ -13,6 +13,10 @@ type Group
     = Group
 
 
+type LoginResult
+    = LoginResult
+
+
 type Person
     = Person
 

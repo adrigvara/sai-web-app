@@ -77,3 +77,20 @@ type alias UserRequiredArguments =
 user : UserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet (Maybe decodesTo) RootQuery
 user requiredArgs object_ =
     Object.selectionForCompositeField "user" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ (identity >> Decode.nullable)
+
+
+type alias LoginRequiredArguments =
+    { username : String
+    , password : String
+    }
+
+
+{-|
+
+  - username -
+  - password -
+
+-}
+login : LoginRequiredArguments -> SelectionSet decodesTo SAI.Object.LoginResult -> SelectionSet decodesTo RootQuery
+login requiredArgs object_ =
+    Object.selectionForCompositeField "login" [ Argument.required "username" requiredArgs.username Encode.string, Argument.required "password" requiredArgs.password Encode.string ] object_ identity

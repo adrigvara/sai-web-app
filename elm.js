@@ -7406,15 +7406,6 @@ var author$project$Main$update = F2(
 			A2(author$project$Main$updateModel, msg, model),
 			elm$core$Platform$Cmd$none);
 	});
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var author$project$Main$stringErrorView = elm$html$Html$text;
-var author$project$Main$graphqlErrorView = A2(
-	elm$core$Basics$composeR,
-	function ($) {
-		return $.bw;
-	},
-	author$project$Main$stringErrorView);
 var elm$core$Result$toMaybe = function (result) {
 	if (!result.$) {
 		var v = result.a;
@@ -7449,16 +7440,26 @@ var author$project$Main$httpErrorString = function (err) {
 			return 'Malformed url: ' + url;
 	}
 };
-var author$project$Main$httpErrorView = A2(elm$core$Basics$composeR, author$project$Main$httpErrorString, author$project$Main$stringErrorView);
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var author$project$Main$errorView = function (error) {
 	if (!error.$) {
 		var graphqlErrors = error.b;
-		return A2(elm$core$List$map, author$project$Main$graphqlErrorView, graphqlErrors);
+		return A2(
+			elm$core$List$map,
+			A2(
+				elm$core$Basics$composeR,
+				function ($) {
+					return $.bw;
+				},
+				elm$html$Html$text),
+			graphqlErrors);
 	} else {
 		var httpError = error.a;
 		return _List_fromArray(
 			[
-				author$project$Main$httpErrorView(httpError)
+				elm$html$Html$text(
+				author$project$Main$httpErrorString(httpError))
 			]);
 	}
 };
