@@ -1,0 +1,19 @@
+# Elm build file
+elm-stuff/
+
+# Node build files
+node_modules/
+package-lock.json
+
+# Environment variables file
+.env
+.env.test
+# Logs
+logs
+*.logs
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
