@@ -59,6 +59,37 @@ init flags =
     ( Model (Loading Spinner.init) session, getPeople session )
 
 
+
+-- UPDATE
+
+
+type Msg
+    = GotPeople (List Person)
+    | NotGotPeople (Http.Error (List Person))
+    | GotSpinnerMsg Spinner.Msg
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    ( updateModel msg model, Cmd.none )
+
+
+updateModel : Msg -> Model -> Model
+updateModel msg model =
+    case ( msg, model ) of
+        ( GotPeople personList, Model _ session ) ->
+            Model (Loaded personList) session
+
+        ( NotGotPeople error, Model _ session ) ->
+            Model (NotLoaded error) session
+
+        ( GotSpinnerMsg subMsg, Model (Loading spinner) session ) ->
+            Model (Loading (Spinner.update subMsg spinner)) session
+
+        ( GotSpinnerMsg _, _ ) ->
+            model
+
+
 getPeople : Session -> Cmd Msg
 getPeople =
     Session.queryReq peopleResultToMsg peopleSel
@@ -89,37 +120,6 @@ personSel =
 
 
 
--- UPDATE
-
-
-type Msg
-    = GotPeople (List Person)
-    | NotGotPeople (Http.Error (List Person))
-    | GotSpinnerMsg Spinner.Msg
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    ( updateModel msg model, Cmd.none )
-
-
-updateModel : Msg -> Model -> Model
-updateModel msg model =
-    case ( msg, model ) of
-        ( GotPeople personList, Model _ apiUrl ) ->
-            Model (Loaded personList) apiUrl
-
-        ( NotGotPeople error, Model _ apiUrl ) ->
-            Model (NotLoaded error) apiUrl
-
-        ( GotSpinnerMsg subMsg, Model (Loading spinner) apiUrl ) ->
-            Model (Loading (Spinner.update subMsg spinner)) apiUrl
-
-        ( GotSpinnerMsg _, _ ) ->
-            model
-
-
-
 -- VIEW
 
 
@@ -137,7 +137,7 @@ bodyView (Model people _) =
             [ spinnerView spinner ]
 
         Loaded personList ->
-            List.map personView personList
+            [ Html.ul [] (List.map personView personList) ]
 
         NotLoaded error ->
             errorView error
@@ -150,7 +150,34 @@ spinnerView spinner =
 
 personView : Person -> Html Msg
 personView person =
-    Html.div [] [ Html.text (.name person) ]
+    Html.ul [] (fieldsViews person)
+
+
+fieldsViews : Person -> List (Html Msg)
+fieldsViews person =
+    Html.li [] [ Html.text person.name ] :: maybeFieldsViews person
+
+
+maybeFieldsViews : Person -> List (Html Msg)
+maybeFieldsViews person =
+    person
+        |> maybeFields
+        |> maybeFilter
+        |> List.map Html.text
+        |> List.map (Html.li [] << List.singleton)
+
+
+maybeFields : Person -> List (Maybe String)
+maybeFields person =
+    [ person.email
+    , person.phone
+    , person.address
+    ]
+
+
+maybeFilter : List (Maybe a) -> List a
+maybeFilter =
+    List.filterMap identity
 
 
 errorView : Http.Error x -> List (Html Msg)
