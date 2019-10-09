@@ -1,6 +1,12 @@
 module Main exposing (main)
 
 import Browser
+import Element exposing (..)
+import Element.Background as Background
+import Element.Border as Border
+import Element.Events exposing (..)
+import Element.Font as Font
+import Element.Input as Input
 import Graphql.Http as Http
 import Graphql.Http.GraphqlError as GraphqlError exposing (GraphqlError)
 import Graphql.Operation exposing (RootQuery)
@@ -33,7 +39,7 @@ main =
 
 
 type Model
-    = Model People Session
+    = Model Session People
 
 
 type People
@@ -56,7 +62,7 @@ init flags =
         session =
             Session.new flags
     in
-    ( Model (Loading Spinner.init) session, getPeople session )
+    ( Model session (Loading Spinner.init), getPeople session )
 
 
 
@@ -77,14 +83,14 @@ update msg model =
 updateModel : Msg -> Model -> Model
 updateModel msg model =
     case ( msg, model ) of
-        ( GotPeople personList, Model _ session ) ->
-            Model (Loaded personList) session
+        ( GotPeople personList, Model session _ ) ->
+            Model session (Loaded personList)
 
-        ( NotGotPeople error, Model _ session ) ->
-            Model (NotLoaded error) session
+        ( NotGotPeople error, Model session _ ) ->
+            Model session (NotLoaded error)
 
-        ( GotSpinnerMsg subMsg, Model (Loading spinner) session ) ->
-            Model (Loading (Spinner.update subMsg spinner)) session
+        ( GotSpinnerMsg subMsg, Model session (Loading spinner) ) ->
+            Model session (Loading (Spinner.update subMsg spinner))
 
         ( GotSpinnerMsg _, _ ) ->
             model
@@ -113,7 +119,7 @@ peopleSel =
 personSel : SelectionSet Person SAI.Object.Person
 personSel =
     SelectionSet.map4 Person
-        Person.name
+        Person.fullName
         Person.email
         Person.phone
         Person.address
@@ -124,60 +130,83 @@ personSel =
 
 
 view : Model -> Browser.Document Msg
-view model =
+view (Model _ people) =
     { title = "People | SAI"
-    , body = bodyView model
+    , body = [ peopleView people ]
     }
 
 
-bodyView : Model -> List (Html Msg)
-bodyView (Model people _) =
+peopleView : People -> Html Msg
+peopleView people =
     case people of
         Loading spinner ->
-            [ spinnerView spinner ]
+            spinnerView spinner
 
         Loaded personList ->
-            [ Html.ul [] (List.map personView personList) ]
+            layout [ Background.color <| rgb255 235 237 239 ] <|
+                wrappedRow [ padding 16, spacing 24 ] <|
+                    List.map personView personList
 
         NotLoaded error ->
-            errorView error
+            Html.div [] <| errorView error
 
 
-spinnerView : Spinner.Model -> Html Msg
-spinnerView spinner =
-    Html.div [] [ Spinner.view Spinner.defaultConfig spinner ]
-
-
-personView : Person -> Html Msg
+personView : Person -> Element Msg
 personView person =
-    Html.ul [] (fieldsViews person)
+    column
+        [ padding 16
+        , spacing 24
+        , height fill
+        , width fill
+        , Background.color <| rgb255 255 255 255
+        ]
+        [ nameView person.name
+        , contactInfoView person
+        ]
 
 
-fieldsViews : Person -> List (Html Msg)
-fieldsViews person =
-    Html.li [] [ Html.text person.name ] :: maybeFieldsViews person
+nameView : String -> Element Msg
+nameView name =
+    el [ Font.size 20 ] <| text name
 
 
-maybeFieldsViews : Person -> List (Html Msg)
-maybeFieldsViews person =
-    person
-        |> maybeFields
-        |> maybeFilter
-        |> List.map Html.text
-        |> List.map (Html.li [] << List.singleton)
+contactInfoView : Person -> Element Msg
+contactInfoView person =
+    column [ Font.size 15, spacing 5 ]
+        [ phoneView person.phone
+        , emailView person.email
+        , addressView person.address
+        ]
 
 
-maybeFields : Person -> List (Maybe String)
-maybeFields person =
-    [ person.email
-    , person.phone
-    , person.address
-    ]
+phoneView : Maybe String -> Element Msg
+phoneView phone =
+    case phone of
+        Just phoneString ->
+            el [] <| text phoneString
+
+        Nothing ->
+            none
 
 
-maybeFilter : List (Maybe a) -> List a
-maybeFilter =
-    List.filterMap identity
+emailView : Maybe String -> Element Msg
+emailView email =
+    case email of
+        Just emailString ->
+            el [] <| text emailString
+
+        Nothing ->
+            none
+
+
+addressView : Maybe String -> Element Msg
+addressView address =
+    case address of
+        Just addressString ->
+            el [] <| text addressString
+
+        Nothing ->
+            none
 
 
 errorView : Http.Error x -> List (Html Msg)
@@ -188,6 +217,11 @@ errorView error =
 
         Http.HttpError httpError ->
             [ httpError |> httpErrorString |> Html.text ]
+
+
+spinnerView : Spinner.Model -> Html Msg
+spinnerView spinner =
+    Html.div [] [ Spinner.view Spinner.defaultConfig spinner ]
 
 
 httpErrorString : Http.HttpError -> String
@@ -222,7 +256,7 @@ parseError =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model of
-        Model (Loading _) _ ->
+        Model _ (Loading _) ->
             Sub.map GotSpinnerMsg Spinner.subscription
 
         _ ->
