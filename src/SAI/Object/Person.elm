@@ -11,7 +11,6 @@ import Graphql.Operation exposing (RootMutation, RootQuery, RootSubscription)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
-import SAI.Enum.AtentionNeed
 import SAI.Enum.CivilState
 import SAI.Enum.Gender
 import SAI.Enum.Progress
@@ -68,15 +67,9 @@ phone =
 
 
 {-| -}
-baptized : SelectionSet Bool SAI.Object.Person
-baptized =
-    Object.selectionForField "Bool" "baptized" [] Decode.bool
-
-
-{-| -}
-socialCategory : SelectionSet (Maybe SAI.Enum.SocialCategory.SocialCategory) SAI.Object.Person
+socialCategory : SelectionSet SAI.Enum.SocialCategory.SocialCategory SAI.Object.Person
 socialCategory =
-    Object.selectionForField "(Maybe Enum.SocialCategory.SocialCategory)" "socialCategory" [] (SAI.Enum.SocialCategory.decoder |> Decode.nullable)
+    Object.selectionForField "Enum.SocialCategory.SocialCategory" "socialCategory" [] SAI.Enum.SocialCategory.decoder
 
 
 {-| -}
@@ -107,18 +100,6 @@ age =
 progress : SelectionSet SAI.Enum.Progress.Progress SAI.Object.Person
 progress =
     Object.selectionForField "Enum.Progress.Progress" "progress" [] SAI.Enum.Progress.decoder
-
-
-{-| -}
-atentionneed : SelectionSet (Maybe SAI.Enum.AtentionNeed.AtentionNeed) SAI.Object.Person
-atentionneed =
-    Object.selectionForField "(Maybe Enum.AtentionNeed.AtentionNeed)" "atentionneed" [] (SAI.Enum.AtentionNeed.decoder |> Decode.nullable)
-
-
-{-| -}
-church : SelectionSet String SAI.Object.Person
-church =
-    Object.selectionForField "String" "church" [] Decode.string
 
 
 {-| -}

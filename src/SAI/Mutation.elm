@@ -48,31 +48,31 @@ updatePerson requiredArgs object_ =
 
 
 type alias DisablePersonRequiredArguments =
-    { input : SAI.InputObject.UpdatePersonInput }
+    { id : SAI.ScalarCodecs.Id }
 
 
 {-|
 
-  - input -
+  - id -
 
 -}
 disablePerson : DisablePersonRequiredArguments -> SelectionSet decodesTo SAI.Object.Person -> SelectionSet decodesTo RootMutation
 disablePerson requiredArgs object_ =
-    Object.selectionForCompositeField "disablePerson" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdatePersonInput ] object_ identity
+    Object.selectionForCompositeField "disablePerson" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity
 
 
 type alias EnablePersonRequiredArguments =
-    { input : SAI.InputObject.UpdatePersonInput }
+    { id : SAI.ScalarCodecs.Id }
 
 
 {-|
 
-  - input -
+  - id -
 
 -}
 enablePerson : EnablePersonRequiredArguments -> SelectionSet decodesTo SAI.Object.Person -> SelectionSet decodesTo RootMutation
 enablePerson requiredArgs object_ =
-    Object.selectionForCompositeField "enablePerson" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdatePersonInput ] object_ identity
+    Object.selectionForCompositeField "enablePerson" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity
 
 
 type alias CreateGroupRequiredArguments =
@@ -104,31 +104,31 @@ updateGroup requiredArgs object_ =
 
 
 type alias DisableGroupRequiredArguments =
-    { input : SAI.InputObject.UpdateGroupInput }
+    { id : SAI.ScalarCodecs.Id }
 
 
 {-|
 
-  - input -
+  - id -
 
 -}
 disableGroup : DisableGroupRequiredArguments -> SelectionSet decodesTo SAI.Object.Group -> SelectionSet decodesTo RootMutation
 disableGroup requiredArgs object_ =
-    Object.selectionForCompositeField "disableGroup" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateGroupInput ] object_ identity
+    Object.selectionForCompositeField "disableGroup" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity
 
 
 type alias EnableGroupRequiredArguments =
-    { input : SAI.InputObject.UpdateGroupInput }
+    { id : SAI.ScalarCodecs.Id }
 
 
 {-|
 
-  - input -
+  - id -
 
 -}
 enableGroup : EnableGroupRequiredArguments -> SelectionSet decodesTo SAI.Object.Group -> SelectionSet decodesTo RootMutation
 enableGroup requiredArgs object_ =
-    Object.selectionForCompositeField "enableGroup" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateGroupInput ] object_ identity
+    Object.selectionForCompositeField "enableGroup" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity
 
 
 type alias CreateUserRequiredArguments =
@@ -160,28 +160,28 @@ updateUser requiredArgs object_ =
 
 
 type alias DisableUserRequiredArguments =
-    { input : SAI.InputObject.UpdateUserInput }
+    { id : SAI.ScalarCodecs.Id }
 
 
 {-|
 
-  - input -
+  - id -
 
 -}
 disableUser : DisableUserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet decodesTo RootMutation
 disableUser requiredArgs object_ =
-    Object.selectionForCompositeField "disableUser" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateUserInput ] object_ identity
+    Object.selectionForCompositeField "disableUser" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity
 
 
 type alias EnableUserRequiredArguments =
-    { input : SAI.InputObject.UpdateUserInput }
+    { id : SAI.ScalarCodecs.Id }
 
 
 {-|
 
-  - input -
+  - id -
 
 -}
 enableUser : EnableUserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet decodesTo RootMutation
 enableUser requiredArgs object_ =
-    Object.selectionForCompositeField "enableUser" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateUserInput ] object_ identity
+    Object.selectionForCompositeField "enableUser" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity

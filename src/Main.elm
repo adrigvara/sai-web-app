@@ -7,6 +7,7 @@ import Element.Border as Border
 import Element.Events exposing (..)
 import Element.Font as Font
 import Element.Input as Input
+import Element.Region as Region
 import Graphql.Http as Http
 import Graphql.Http.GraphqlError as GraphqlError exposing (GraphqlError)
 import Graphql.Operation exposing (RootQuery)
@@ -17,7 +18,6 @@ import SAI.Object
 import SAI.Object.Person as Person
 import SAI.Query as Query
 import Session exposing (Session)
-import Spinner
 
 
 
@@ -43,7 +43,7 @@ type Model
 
 
 type People
-    = Loading Spinner.Model
+    = Loading
     | Loaded (List Person)
     | NotLoaded (Http.Error (List Person))
 
@@ -62,7 +62,7 @@ init flags =
         session =
             Session.new flags
     in
-    ( Model session (Loading Spinner.init), getPeople session )
+    ( Model session Loading, getPeople session )
 
 
 
@@ -72,7 +72,6 @@ init flags =
 type Msg
     = GotPeople (List Person)
     | NotGotPeople (Http.Error (List Person))
-    | GotSpinnerMsg Spinner.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -88,12 +87,6 @@ updateModel msg model =
 
         ( NotGotPeople error, Model session _ ) ->
             Model session (NotLoaded error)
-
-        ( GotSpinnerMsg subMsg, Model session (Loading spinner) ) ->
-            Model session (Loading (Spinner.update subMsg spinner))
-
-        ( GotSpinnerMsg _, _ ) ->
-            model
 
 
 getPeople : Session -> Cmd Msg
@@ -139,12 +132,13 @@ view (Model _ people) =
 peopleView : People -> Html Msg
 peopleView people =
     case people of
-        Loading spinner ->
-            spinnerView spinner
+        Loading ->
+            layout [ Background.color <| rgb255 235 237 239 ] <|
+                text "Loading..."
 
         Loaded personList ->
             layout [ Background.color <| rgb255 235 237 239 ] <|
-                wrappedRow [ padding 16, spacing 24 ] <|
+                wrappedRow [ padding 16, spacing 16 ] <|
                     List.map personView personList
 
         NotLoaded error ->
@@ -155,9 +149,10 @@ personView : Person -> Element Msg
 personView person =
     column
         [ padding 16
-        , spacing 24
+        , spacing 16
+        , width <| px 320
         , height fill
-        , width fill
+        , centerX
         , Background.color <| rgb255 255 255 255
         ]
         [ nameView person.name
@@ -167,12 +162,12 @@ personView person =
 
 nameView : String -> Element Msg
 nameView name =
-    el [ Font.size 20 ] <| text name
+    el [ Font.size 15 ] <| text name
 
 
 contactInfoView : Person -> Element Msg
 contactInfoView person =
-    column [ Font.size 15, spacing 5 ]
+    column [ Font.size 12, spacing 5 ]
         [ phoneView person.phone
         , emailView person.email
         , addressView person.address
@@ -219,11 +214,6 @@ errorView error =
             [ httpError |> httpErrorString |> Html.text ]
 
 
-spinnerView : Spinner.Model -> Html Msg
-spinnerView spinner =
-    Html.div [] [ Spinner.view Spinner.defaultConfig spinner ]
-
-
 httpErrorString : Http.HttpError -> String
 httpErrorString err =
     case err of
@@ -254,10 +244,5 @@ parseError =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
-    case model of
-        Model _ (Loading _) ->
-            Sub.map GotSpinnerMsg Spinner.subscription
-
-        _ ->
-            Sub.none
+subscriptions (Model _ _) =
+    Sub.none
