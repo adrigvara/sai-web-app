@@ -20,6 +20,7 @@ import List.Extra
 import SAI.Object
 import SAI.Object.Person as Person
 import SAI.Query as Query
+import SAI.ScalarCodecs exposing (Id)
 import Session exposing (Session)
 import Window
 
@@ -53,7 +54,9 @@ type People
 
 
 type alias Person =
-    { name : String
+    { id : Id
+    , image : String
+    , name : String
     , email : Maybe String
     , phone : Maybe String
     , address : Maybe String
@@ -124,11 +127,18 @@ peopleSel =
 
 personSel : SelectionSet Person SAI.Object.Person
 personSel =
-    SelectionSet.map4 Person
+    SelectionSet.map6 Person
+        Person.id
+        imageSel
         Person.fullName
         Person.email
         Person.phone
         Person.address
+
+
+imageSel : SelectionSet String SAI.Object.Person
+imageSel =
+    SelectionSet.map (Maybe.withDefault "https://img.myloview.es/fotomurales/icono-de-persona-generica-400-114079057.jpg") Person.image
 
 
 
@@ -224,9 +234,20 @@ personView person =
         , centerX
         , Background.color <| rgb255 255 255 255
         ]
-        [ nameView person.name
+        [ imageView person.image
+        , nameView person.name
         , contactInfoView person
         ]
+
+
+imageView : String -> Element Msg
+imageView src =
+    image imageAttributes { src = src, description = "" }
+
+
+imageAttributes : List (Attribute msg)
+imageAttributes =
+    [ Border.rounded 10, centerX, width (fill |> maximum 150 |> minimum 50), height (fill |> maximum 150 |> minimum 50) ]
 
 
 nameView : String -> Element Msg
