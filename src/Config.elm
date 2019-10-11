@@ -1,6 +1,9 @@
-module Config exposing (apiUrl)
+module Config exposing (..)
 
 
-apiUrl : String
 apiUrl =
     "https://saiapi.herokuapp.com/graphql"
+
+
+windowSize =
+    { height = 1360, width = 768 }

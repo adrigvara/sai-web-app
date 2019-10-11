@@ -11,12 +11,27 @@ import Graphql.Operation exposing (RootMutation, RootQuery, RootSubscription)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode exposing (Decoder)
+import SAI.Enum.Status
 import SAI.InputObject
 import SAI.Interface
 import SAI.Object
 import SAI.Scalar
 import SAI.ScalarCodecs
 import SAI.Union
+
+
+type alias PeoplebystatusRequiredArguments =
+    { status : SAI.Enum.Status.Status }
+
+
+{-|
+
+  - status -
+
+-}
+peoplebystatus : PeoplebystatusRequiredArguments -> SelectionSet decodesTo SAI.Object.Person -> SelectionSet (List decodesTo) RootQuery
+peoplebystatus requiredArgs object_ =
+    Object.selectionForCompositeField "peoplebystatus" [ Argument.required "status" requiredArgs.status (Encode.enum SAI.Enum.Status.toString) ] object_ (identity >> Decode.list)
 
 
 {-| -}

@@ -103,6 +103,12 @@ progress =
 
 
 {-| -}
+image : SelectionSet (Maybe String) SAI.Object.Person
+image =
+    Object.selectionForField "(Maybe String)" "image" [] (Decode.string |> Decode.nullable)
+
+
+{-| -}
 status : SelectionSet SAI.Enum.Status.Status SAI.Object.Person
 status =
     Object.selectionForField "Enum.Status.Status" "status" [] SAI.Enum.Status.decoder

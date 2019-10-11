@@ -1,6 +1,8 @@
 module Main exposing (main)
 
 import Browser
+import Browser.Events
+import Config
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -14,10 +16,12 @@ import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (Html)
 import Json.Decode as Decode exposing (Value)
+import List.Extra
 import SAI.Object
 import SAI.Object.Person as Person
 import SAI.Query as Query
 import Session exposing (Session)
+import Window
 
 
 
@@ -39,7 +43,7 @@ main =
 
 
 type Model
-    = Model Session People
+    = Model Device Session People
 
 
 type People
@@ -62,7 +66,12 @@ init flags =
         session =
             Session.new flags
     in
-    ( Model session Loading, getPeople session )
+    ( Model (initDevice flags) session Loading, getPeople session )
+
+
+initDevice : Value -> Device
+initDevice flags =
+    classifyDevice <| Window.size flags
 
 
 
@@ -72,6 +81,7 @@ init flags =
 type Msg
     = GotPeople (List Person)
     | NotGotPeople (Http.Error (List Person))
+    | WindowResized Int Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -82,11 +92,14 @@ update msg model =
 updateModel : Msg -> Model -> Model
 updateModel msg model =
     case ( msg, model ) of
-        ( GotPeople personList, Model session _ ) ->
-            Model session (Loaded personList)
+        ( GotPeople personList, Model device session _ ) ->
+            Model device session (Loaded personList)
 
-        ( NotGotPeople error, Model session _ ) ->
-            Model session (NotLoaded error)
+        ( NotGotPeople error, Model device session _ ) ->
+            Model device session (NotLoaded error)
+
+        ( WindowResized width height, Model _ session people ) ->
+            Model (classifyDevice <| Window.Size width height) session people
 
 
 getPeople : Session -> Cmd Msg
@@ -123,34 +136,90 @@ personSel =
 
 
 view : Model -> Browser.Document Msg
-view (Model _ people) =
+view (Model device _ people) =
     { title = "People | SAI"
-    , body = [ peopleView people ]
+    , body =
+        [ layout [ Background.color <| rgb255 235 237 239 ] <|
+            peopleView device people
+        ]
     }
 
 
-peopleView : People -> Html Msg
-peopleView people =
-    case people of
-        Loading ->
-            layout [ Background.color <| rgb255 235 237 239 ] <|
-                text "Loading..."
+peopleView : Device -> People -> Element Msg
+peopleView { class, orientation } people =
+    case ( people, class, orientation ) of
+        ( Loading, _, _ ) ->
+            text "Loading..."
 
-        Loaded personList ->
-            layout [ Background.color <| rgb255 235 237 239 ] <|
-                wrappedRow [ padding 16, spacing 16 ] <|
-                    List.map personView personList
+        ( Loaded personList, _, _ ) ->
+            personListDesktopView personList
 
-        NotLoaded error ->
-            Html.div [] <| errorView error
+        ( NotLoaded error, _, _ ) ->
+            column [] <| errorView error
+
+
+personListDesktopView : List Person -> Element Msg
+personListDesktopView personList =
+    column
+        [ padding 32
+        , spacing 16
+        , width fill
+        , height fill
+        ]
+    <|
+        personViewsRows 3 personList
+
+
+personPadding : Int
+personPadding =
+    16
+
+
+personViewsRows : Int -> List Person -> List (Element Msg)
+personViewsRows peoplePerRow personList =
+    personList
+        |> List.map personView
+        |> List.Extra.greedyGroupsOf peoplePerRow
+        |> fillLast { desiredNumber = peoplePerRow, emptyPadding = personPadding }
+        |> List.map (row [ spacing 16, width fill ])
+
+
+fillLast :
+    { desiredNumber : Int, emptyPadding : Int }
+    -> List (List (Element msg))
+    -> List (List (Element msg))
+fillLast opts table =
+    List.reverse <|
+        case List.reverse table of
+            x :: xs ->
+                fillWithEmptys opts x :: xs
+
+            x ->
+                x
+
+
+fillWithEmptys :
+    { desiredNumber : Int, emptyPadding : Int }
+    -> List (Element msg)
+    -> List (Element msg)
+fillWithEmptys { desiredNumber, emptyPadding } list =
+    list
+        ++ List.repeat
+            (desiredNumber - List.length list)
+            (emptyElement emptyPadding)
+
+
+emptyElement : Int -> Element msg
+emptyElement emptyPadding =
+    el [ width fill, height fill, padding emptyPadding ] none
 
 
 personView : Person -> Element Msg
 personView person =
     column
-        [ padding 16
+        [ padding personPadding
         , spacing 16
-        , width <| px 320
+        , width fill
         , height fill
         , centerX
         , Background.color <| rgb255 255 255 255
@@ -204,14 +273,14 @@ addressView address =
             none
 
 
-errorView : Http.Error x -> List (Html Msg)
+errorView : Http.Error error -> List (Element Msg)
 errorView error =
     case error of
         Http.GraphqlError _ graphqlErrors ->
-            List.map (.message >> Html.text) graphqlErrors
+            List.map (.message >> text) graphqlErrors
 
         Http.HttpError httpError ->
-            [ httpError |> httpErrorString |> Html.text ]
+            [ httpError |> httpErrorString |> text ]
 
 
 httpErrorString : Http.HttpError -> String
@@ -244,5 +313,5 @@ parseError =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions (Model _ _) =
-    Sub.none
+subscriptions (Model _ _ _) =
+    Sub.batch [ Browser.Events.onResize WindowResized ]

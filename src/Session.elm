@@ -13,8 +13,7 @@ type Session
 
 new : Value -> Session
 new flags =
-    decodeApiUrl flags
-        |> Session
+    Session <| decodeApiUrl flags
 
 
 decodeApiUrl : Value -> String
