@@ -11,7 +11,7 @@
     "elm-live": "^4.0.1"
   },
   "scripts": {
-    "test": "elm-live src/Main.elm -- --output index.js --optimize",
+    "test": "elm-live src/Main.elm -- --output index.js",
     "build": "elm make src/Main.elm --output index.js --optimize",
     "prebuild": "npm run gen-api-code",
     "gen-api-code": "elm-graphql https://saiapi.herokuapp.com/graphql --base SAI"

@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Index</title>
   <script src="index.js"></script>
 </head>
@@ -11,8 +12,12 @@
   <script>
   var index = Elm.Main.init({
     node: document.getElementById('index'),
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: window.innerWidth
+	|| document.documentElement.clientWidth
+	|| document.body.clientWidth,
+    height: window.innerHeight
+	|| document.documentElement.clientHeight
+	|| document.body.clientHeight
   })
   </script>
 </body>

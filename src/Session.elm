@@ -1,4 +1,4 @@
-module Session exposing (Session, mutationReq, new, queryReq)
+module Session exposing (Session, fromFlags, mutationReq, queryReq)
 
 import Config
 import Graphql.Http as Http
@@ -11,8 +11,8 @@ type Session
     = Session String
 
 
-new : Value -> Session
-new flags =
+fromFlags : Value -> Session
+fromFlags flags =
     Session <| decodeApiUrl flags
 
 

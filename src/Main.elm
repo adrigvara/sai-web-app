@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser
 import Browser.Events
 import Config
+import Device
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -35,7 +36,7 @@ main =
         { init = init
         , update = update
         , view = view
-        , subscriptions = subscriptions
+        , subscriptions = subs
         }
 
 
@@ -67,14 +68,9 @@ init : Value -> ( Model, Cmd Msg )
 init flags =
     let
         session =
-            Session.new flags
+            Session.fromFlags flags
     in
-    ( Model (initDevice flags) session Loading, getPeople session )
-
-
-initDevice : Value -> Device
-initDevice flags =
-    classifyDevice <| Window.size flags
+    ( Model (Device.fromFlags flags) session Loading, Cmd.batch [ getPeople session, Device.get GotDevice ] )
 
 
 
@@ -84,7 +80,7 @@ initDevice flags =
 type Msg
     = GotPeople (List Person)
     | NotGotPeople (Http.Error (List Person))
-    | WindowResized Int Int
+    | GotDevice Device
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -101,8 +97,8 @@ updateModel msg model =
         ( NotGotPeople error, Model device session _ ) ->
             Model device session (NotLoaded error)
 
-        ( WindowResized width height, Model _ session people ) ->
-            Model (classifyDevice <| Window.Size width height) session people
+        ( GotDevice device, Model _ session people ) ->
+            Model device session people
 
 
 getPeople : Session -> Cmd Msg
@@ -149,27 +145,51 @@ view : Model -> Browser.Document Msg
 view (Model device _ people) =
     { title = "People | SAI"
     , body =
-        [ layout [ Background.color <| rgb255 235 237 239 ] <|
-            peopleView device people
+        [ layout
+            [ Background.color <| rgb255 235 237 239
+            ]
+          <|
+            pageView device people
         ]
     }
 
 
-peopleView : Device -> People -> Element Msg
-peopleView { class, orientation } people =
+pageView : Device -> People -> Element Msg
+pageView { class, orientation } people =
     case ( people, class, orientation ) of
         ( Loading, _, _ ) ->
             text "Loading..."
 
-        ( Loaded personList, _, _ ) ->
-            personListDesktopView personList
+        ( Loaded personList, Phone, Portrait ) ->
+            peopleView 1 personList
+
+        ( Loaded personList, Phone, Landscape ) ->
+            peopleView 2 personList
+
+        ( Loaded personList, Tablet, Portrait ) ->
+            peopleView 2 personList
+
+        ( Loaded personList, Tablet, Landscape ) ->
+            peopleView 3 personList
+
+        ( Loaded personList, Desktop, Portrait ) ->
+            peopleView 3 personList
+
+        ( Loaded personList, Desktop, Landscape ) ->
+            peopleView 4 personList
+
+        ( Loaded personList, BigDesktop, Portrait ) ->
+            peopleView 4 personList
+
+        ( Loaded personList, BigDesktop, Landscape ) ->
+            peopleView 5 personList
 
         ( NotLoaded error, _, _ ) ->
             column [] <| errorView error
 
 
-personListDesktopView : List Person -> Element Msg
-personListDesktopView personList =
+peopleView : Int -> List Person -> Element Msg
+peopleView peoplePerRow personList =
     column
         [ padding 32
         , spacing 16
@@ -177,7 +197,7 @@ personListDesktopView personList =
         , height fill
         ]
     <|
-        personViewsRows 3 personList
+        personViewsRows peoplePerRow personList
 
 
 personPadding : Int
@@ -231,7 +251,6 @@ personView person =
         , spacing 16
         , width fill
         , height fill
-        , centerX
         , Background.color <| rgb255 255 255 255
         ]
         [ imageView person.image
@@ -247,7 +266,7 @@ imageView src =
 
 imageAttributes : List (Attribute msg)
 imageAttributes =
-    [ Border.rounded 10, centerX, width (fill |> maximum 150 |> minimum 50), height (fill |> maximum 150 |> minimum 50) ]
+    [ centerX, width (fill |> maximum 150 |> minimum 50), height (fill |> maximum 150 |> minimum 50) ]
 
 
 nameView : String -> Element Msg
@@ -333,6 +352,6 @@ parseError =
 -- SUBSCRIPTIONS
 
 
-subscriptions : Model -> Sub Msg
-subscriptions (Model _ _ _) =
-    Sub.batch [ Browser.Events.onResize WindowResized ]
+subs : Model -> Sub Msg
+subs (Model _ _ _) =
+    Sub.batch [ Device.sub GotDevice ]
