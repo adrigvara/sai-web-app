@@ -155,36 +155,24 @@ view (Model device _ people) =
 
 
 pageView : Device -> People -> Element Msg
-pageView { class, orientation } people =
-    case ( people, class, orientation ) of
-        ( Loading, _, _ ) ->
+pageView { class } people =
+    case ( people, class ) of
+        ( Loading, _ ) ->
             text "Loading..."
 
-        ( Loaded personList, Phone, Portrait ) ->
+        ( Loaded personList, Phone ) ->
             peopleView 1 personList
 
-        ( Loaded personList, Phone, Landscape ) ->
+        ( Loaded personList, Tablet ) ->
             peopleView 2 personList
 
-        ( Loaded personList, Tablet, Portrait ) ->
-            peopleView 2 personList
-
-        ( Loaded personList, Tablet, Landscape ) ->
+        ( Loaded personList, Desktop ) ->
             peopleView 3 personList
 
-        ( Loaded personList, Desktop, Portrait ) ->
-            peopleView 3 personList
-
-        ( Loaded personList, Desktop, Landscape ) ->
+        ( Loaded personList, BigDesktop ) ->
             peopleView 4 personList
 
-        ( Loaded personList, BigDesktop, Portrait ) ->
-            peopleView 4 personList
-
-        ( Loaded personList, BigDesktop, Landscape ) ->
-            peopleView 5 personList
-
-        ( NotLoaded error, _, _ ) ->
+        ( NotLoaded error, _ ) ->
             column [] <| errorView error
 
 
