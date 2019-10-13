@@ -17,6 +17,7 @@ import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (Html)
 import Json.Decode as Decode exposing (Value)
+import Layout
 import List.Extra
 import SAI.Object
 import SAI.Object.Person as Person
@@ -154,6 +155,18 @@ view (Model device _ people) =
     }
 
 
+type alias View =
+    Element Msg
+
+
+type alias Rule =
+    Attribute Msg
+
+
+type alias Rules =
+    List Rule
+
+
 pageView : Device -> People -> Element Msg
 pageView { class } people =
     case ( people, class ) of
@@ -161,75 +174,40 @@ pageView { class } people =
             text "Loading..."
 
         ( Loaded personList, Phone ) ->
-            peopleView 1 personList
+            peopleLayout 1 personList
 
         ( Loaded personList, Tablet ) ->
-            peopleView 2 personList
+            peopleLayout 2 personList
 
         ( Loaded personList, Desktop ) ->
-            peopleView 3 personList
+            peopleLayout 3 personList
 
         ( Loaded personList, BigDesktop ) ->
-            peopleView 4 personList
+            peopleLayout 4 personList
 
         ( NotLoaded error, _ ) ->
             column [] <| errorView error
 
 
-peopleView : Int -> List Person -> Element Msg
-peopleView peoplePerRow personList =
-    column
-        [ padding 32
-        , spacing 16
-        , width fill
-        , height fill
-        ]
-    <|
-        personViewsRows peoplePerRow personList
+peopleLayout : Int -> List Person -> View
+peopleLayout =
+    Layout.grid columnRules rowRules personPadding personView
 
 
-personPadding : Int
-personPadding =
-    16
+columnRules : List Rule
+columnRules =
+    [ padding 16
+    , spacing 16
+    , width fill
+    , height fill
+    ]
 
 
-personViewsRows : Int -> List Person -> List (Element Msg)
-personViewsRows peoplePerRow personList =
-    personList
-        |> List.map personView
-        |> List.Extra.greedyGroupsOf peoplePerRow
-        |> fillLast { desiredNumber = peoplePerRow, emptyPadding = personPadding }
-        |> List.map (row [ spacing 16, width fill ])
-
-
-fillLast :
-    { desiredNumber : Int, emptyPadding : Int }
-    -> List (List (Element msg))
-    -> List (List (Element msg))
-fillLast opts table =
-    List.reverse <|
-        case List.reverse table of
-            x :: xs ->
-                fillWithEmptys opts x :: xs
-
-            x ->
-                x
-
-
-fillWithEmptys :
-    { desiredNumber : Int, emptyPadding : Int }
-    -> List (Element msg)
-    -> List (Element msg)
-fillWithEmptys { desiredNumber, emptyPadding } list =
-    list
-        ++ List.repeat
-            (desiredNumber - List.length list)
-            (emptyElement emptyPadding)
-
-
-emptyElement : Int -> Element msg
-emptyElement emptyPadding =
-    el [ width fill, height fill, padding emptyPadding ] none
+rowRules : List Rule
+rowRules =
+    [ spacing 16
+    , width fill
+    ]
 
 
 personView : Person -> Element Msg
@@ -245,6 +223,11 @@ personView person =
         , nameView person.name
         , contactInfoView person
         ]
+
+
+personPadding : Int
+personPadding =
+    16
 
 
 imageView : String -> Element Msg
