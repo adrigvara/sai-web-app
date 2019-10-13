@@ -103,9 +103,9 @@ progress =
 
 
 {-| -}
-image : SelectionSet (Maybe String) SAI.Object.Person
+image : SelectionSet String SAI.Object.Person
 image =
-    Object.selectionForField "(Maybe String)" "image" [] (Decode.string |> Decode.nullable)
+    Object.selectionForField "String" "image" [] Decode.string
 
 
 {-| -}

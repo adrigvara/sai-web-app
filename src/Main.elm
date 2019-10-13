@@ -1,8 +1,6 @@
 module Main exposing (main)
 
 import Browser
-import Browser.Events
-import Config
 import Device
 import Element exposing (..)
 import Element.Background as Background
@@ -18,20 +16,18 @@ import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (Html)
 import Json.Decode as Decode exposing (Value)
 import Layout
-import List.Extra
 import SAI.Object
 import SAI.Object.Person as Person
 import SAI.Query as Query
 import SAI.ScalarCodecs exposing (Id)
 import Session exposing (Session)
-import Window
 
 
 
 -- MAIN
 
 
-main : Program Decode.Value Model Msg
+main : Program Value Model Msg
 main =
     Browser.document
         { init = init
@@ -126,16 +122,11 @@ personSel : SelectionSet Person SAI.Object.Person
 personSel =
     SelectionSet.map6 Person
         Person.id
-        imageSel
+        Person.image
         Person.fullName
         Person.email
         Person.phone
         Person.address
-
-
-imageSel : SelectionSet String SAI.Object.Person
-imageSel =
-    SelectionSet.map (Maybe.withDefault "https://img.myloview.es/fotomurales/icono-de-persona-generica-400-114079057.jpg") Person.image
 
 
 
@@ -168,29 +159,29 @@ type alias Rules =
 
 
 pageView : Device -> People -> Element Msg
-pageView { class } people =
-    case ( people, class ) of
+pageView { class } page =
+    case ( page, class ) of
         ( Loading, _ ) ->
             text "Loading..."
 
         ( Loaded personList, Phone ) ->
-            peopleLayout 1 personList
+            peopleView 1 personList
 
         ( Loaded personList, Tablet ) ->
-            peopleLayout 2 personList
+            peopleView 2 personList
 
         ( Loaded personList, Desktop ) ->
-            peopleLayout 3 personList
+            peopleView 3 personList
 
         ( Loaded personList, BigDesktop ) ->
-            peopleLayout 4 personList
+            peopleView 4 personList
 
         ( NotLoaded error, _ ) ->
             column [] <| errorView error
 
 
-peopleLayout : Int -> List Person -> View
-peopleLayout =
+peopleView : Int -> List Person -> View
+peopleView =
     Layout.grid columnRules rowRules personPadding personView
 
 

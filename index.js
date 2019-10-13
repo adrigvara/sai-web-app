@@ -5770,25 +5770,6 @@ var elm$json$Json$Decode$nullable = function (decoder) {
 			]));
 };
 var elm$json$Json$Decode$string = _Json_decodeString;
-var author$project$SAI$Object$Person$image = A4(
-	dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
-	'(Maybe String)',
-	'image',
-	_List_Nil,
-	elm$json$Json$Decode$nullable(elm$json$Json$Decode$string));
-var dillonkearns$elm_graphql$Graphql$SelectionSet$map = F2(
-	function (mapFunction, _n0) {
-		var selectionFields = _n0.a;
-		var selectionDecoder = _n0.b;
-		return A2(
-			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
-			selectionFields,
-			A2(elm$json$Json$Decode$map, mapFunction, selectionDecoder));
-	});
-var author$project$Main$imageSel = A2(
-	dillonkearns$elm_graphql$Graphql$SelectionSet$map,
-	elm$core$Maybe$withDefault('https://img.myloview.es/fotomurales/icono-de-persona-generica-400-114079057.jpg'),
-	author$project$SAI$Object$Person$image);
 var author$project$SAI$Object$Person$address = A4(
 	dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
 	'(Maybe String)',
@@ -5849,6 +5830,7 @@ var author$project$SAI$Object$Person$id = A4(
 	'id',
 	_List_Nil,
 	author$project$SAI$Scalar$unwrapCodecs(author$project$SAI$ScalarCodecs$codecs).aZ.cX);
+var author$project$SAI$Object$Person$image = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'image', _List_Nil, elm$json$Json$Decode$string);
 var author$project$SAI$Object$Person$phone = A4(
 	dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
 	'(Maybe String)',
@@ -5880,7 +5862,7 @@ var dillonkearns$elm_graphql$Graphql$SelectionSet$map6 = F7(
 					[selectionFields1, selectionFields2, selectionFields3, selectionFields4, selectionFields5, selectionFields6])),
 			A7(elm$json$Json$Decode$map6, combine, selectionDecoder1, selectionDecoder2, selectionDecoder3, selectionDecoder4, selectionDecoder5, selectionDecoder6));
 	});
-var author$project$Main$personSel = A7(dillonkearns$elm_graphql$Graphql$SelectionSet$map6, author$project$Main$Person, author$project$SAI$Object$Person$id, author$project$Main$imageSel, author$project$SAI$Object$Person$fullName, author$project$SAI$Object$Person$email, author$project$SAI$Object$Person$phone, author$project$SAI$Object$Person$address);
+var author$project$Main$personSel = A7(dillonkearns$elm_graphql$Graphql$SelectionSet$map6, author$project$Main$Person, author$project$SAI$Object$Person$id, author$project$SAI$Object$Person$image, author$project$SAI$Object$Person$fullName, author$project$SAI$Object$Person$email, author$project$SAI$Object$Person$phone, author$project$SAI$Object$Person$address);
 var dillonkearns$elm_graphql$Graphql$RawField$Composite = F3(
 	function (a, b, c) {
 		return {$: 0, a: a, b: b, c: c};
@@ -13605,11 +13587,11 @@ var author$project$Main$rowRules = _List_fromArray(
 		mdgriffith$elm_ui$Element$spacing(16),
 		mdgriffith$elm_ui$Element$width(mdgriffith$elm_ui$Element$fill)
 	]);
-var author$project$Main$peopleLayout = A4(author$project$Layout$grid, author$project$Main$columnRules, author$project$Main$rowRules, author$project$Main$personPadding, author$project$Main$personView);
+var author$project$Main$peopleView = A4(author$project$Layout$grid, author$project$Main$columnRules, author$project$Main$rowRules, author$project$Main$personPadding, author$project$Main$personView);
 var author$project$Main$pageView = F2(
-	function (_n0, people) {
+	function (_n0, page) {
 		var _class = _n0.cO;
-		var _n1 = _Utils_Tuple2(people, _class);
+		var _n1 = _Utils_Tuple2(page, _class);
 		switch (_n1.a.$) {
 			case 0:
 				var _n2 = _n1.a;
@@ -13619,19 +13601,19 @@ var author$project$Main$pageView = F2(
 					case 0:
 						var personList = _n1.a.a;
 						var _n3 = _n1.b;
-						return A2(author$project$Main$peopleLayout, 1, personList);
+						return A2(author$project$Main$peopleView, 1, personList);
 					case 1:
 						var personList = _n1.a.a;
 						var _n4 = _n1.b;
-						return A2(author$project$Main$peopleLayout, 2, personList);
+						return A2(author$project$Main$peopleView, 2, personList);
 					case 2:
 						var personList = _n1.a.a;
 						var _n5 = _n1.b;
-						return A2(author$project$Main$peopleLayout, 3, personList);
+						return A2(author$project$Main$peopleView, 3, personList);
 					default:
 						var personList = _n1.a.a;
 						var _n6 = _n1.b;
-						return A2(author$project$Main$peopleLayout, 4, personList);
+						return A2(author$project$Main$peopleView, 4, personList);
 				}
 			default:
 				var error = _n1.a.a;
