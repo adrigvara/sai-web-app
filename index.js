@@ -4640,7 +4640,14 @@ function _Url_percentDecode(string)
 	{
 		return elm$core$Maybe$Nothing;
 	}
-}var author$project$Window$Size = F2(
+}var mdgriffith$elm_ui$Element$Desktop = 2;
+var mdgriffith$elm_ui$Element$Device = F2(
+	function (_class, orientation) {
+		return {d$: _class, c2: orientation};
+	});
+var mdgriffith$elm_ui$Element$Landscape = 1;
+var author$project$Device$default = A2(mdgriffith$elm_ui$Element$Device, 2, 1);
+var author$project$Device$WindowSize = F2(
 	function (width, height) {
 		return {ew: height, gt: width};
 	});
@@ -5122,34 +5129,17 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 var elm$json$Json$Decode$field = _Json_decodeField;
 var elm$json$Json$Decode$int = _Json_decodeInt;
 var elm$json$Json$Decode$map2 = _Json_map2;
-var author$project$Window$Size$decoder = A3(
+var author$project$Device$windowSizeDecoder = A3(
 	elm$json$Json$Decode$map2,
-	author$project$Window$Size,
+	author$project$Device$WindowSize,
 	A2(elm$json$Json$Decode$field, 'width', elm$json$Json$Decode$int),
 	A2(elm$json$Json$Decode$field, 'heigth', elm$json$Json$Decode$int));
-var author$project$Window$Size$default = A2(author$project$Window$Size, 1280, 768);
 var elm$json$Json$Decode$decodeValue = _Json_run;
-var author$project$Window$Size$fromFlags = function (flags) {
-	var _n0 = A2(elm$json$Json$Decode$decodeValue, author$project$Window$Size$decoder, flags);
-	if (!_n0.$) {
-		var windowSize = _n0.a;
-		return windowSize;
-	} else {
-		return author$project$Window$Size$default;
-	}
-};
-var elm$core$Basics$composeL = F3(
-	function (g, f, x) {
-		return g(
-			f(x));
-	});
 var elm$core$Basics$min = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) < 0) ? x : y;
 	});
 var mdgriffith$elm_ui$Element$BigDesktop = 3;
-var mdgriffith$elm_ui$Element$Desktop = 2;
-var mdgriffith$elm_ui$Element$Landscape = 1;
 var mdgriffith$elm_ui$Element$Phone = 0;
 var mdgriffith$elm_ui$Element$Portrait = 0;
 var mdgriffith$elm_ui$Element$Tablet = 1;
@@ -5163,14 +5153,33 @@ var mdgriffith$elm_ui$Element$classifyDevice = function (window) {
 		c2: (_Utils_cmp(window.gt, window.ew) < 0) ? 0 : 1
 	};
 };
-var author$project$Device$fromFlags = A2(elm$core$Basics$composeL, mdgriffith$elm_ui$Element$classifyDevice, author$project$Window$Size$fromFlags);
+var author$project$Device$fromFlags = function (flags) {
+	var _n0 = A2(elm$json$Json$Decode$decodeValue, author$project$Device$windowSizeDecoder, flags);
+	if (!_n0.$) {
+		var windowSize = _n0.a;
+		return mdgriffith$elm_ui$Element$classifyDevice(windowSize);
+	} else {
+		return author$project$Device$default;
+	}
+};
 var elm$core$Basics$round = _Basics_round;
-var author$project$Window$Size$fromViewport = function (_n0) {
+var author$project$Device$windowSizeFromViewport = function (_n0) {
 	var viewport = _n0.go;
 	return A2(
-		author$project$Window$Size,
+		author$project$Device$WindowSize,
 		elm$core$Basics$round(viewport.gt),
 		elm$core$Basics$round(viewport.ew));
+};
+var elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
+var author$project$Device$msgFromViewport = function (msgFromDevice) {
+	return A2(
+		elm$core$Basics$composeL,
+		A2(elm$core$Basics$composeL, msgFromDevice, mdgriffith$elm_ui$Element$classifyDevice),
+		author$project$Device$windowSizeFromViewport);
 };
 var elm$browser$Browser$External = function (a) {
 	return {$: 1, a: a};
@@ -5479,16 +5488,11 @@ var elm$url$Url$fromString = function (str) {
 		A2(elm$core$String$dropLeft, 8, str)) : elm$core$Maybe$Nothing);
 };
 var elm$browser$Browser$Dom$getViewport = _Browser_withWindow(_Browser_getViewport);
-var author$project$Window$Size$getWith = function (toMsg) {
-	return A2(elm$core$Task$perform, toMsg, elm$browser$Browser$Dom$getViewport);
-};
-var author$project$Window$Size$get = function (toMsg) {
-	return author$project$Window$Size$getWith(
-		A2(elm$core$Basics$composeL, toMsg, author$project$Window$Size$fromViewport));
-};
-var author$project$Device$get = function (toMsg) {
-	return author$project$Window$Size$get(
-		A2(elm$core$Basics$composeL, toMsg, mdgriffith$elm_ui$Element$classifyDevice));
+var author$project$Device$get = function (msgFromDevice) {
+	return A2(
+		elm$core$Task$perform,
+		author$project$Device$msgFromViewport(msgFromDevice),
+		elm$browser$Browser$Dom$getViewport);
 };
 var author$project$Main$GotDevice = function (a) {
 	return {$: 2, a: a};
@@ -7322,10 +7326,11 @@ var author$project$Main$init = function (flags) {
 					author$project$Device$get(author$project$Main$GotDevice)
 				])));
 };
-var author$project$Window$Size$composeSub = F4(
-	function (f1, f2, x, y) {
-		return f2(
-			A2(f1, x, y));
+var author$project$Device$compose = F5(
+	function (f1, f2, f3, x, y) {
+		return f3(
+			f2(
+				A2(f1, x, y)));
 	});
 var elm$browser$Browser$Events$Window = 1;
 var elm$browser$Browser$Events$MySub = F3(
@@ -7598,13 +7603,9 @@ var elm$browser$Browser$Events$onResize = function (func) {
 				A2(elm$json$Json$Decode$field, 'innerWidth', elm$json$Json$Decode$int),
 				A2(elm$json$Json$Decode$field, 'innerHeight', elm$json$Json$Decode$int))));
 };
-var author$project$Window$Size$sub = function (toMsg) {
+var author$project$Device$sub = function (deviceToMsg) {
 	return elm$browser$Browser$Events$onResize(
-		A2(author$project$Window$Size$composeSub, author$project$Window$Size, toMsg));
-};
-var author$project$Device$sub = function (toMsg) {
-	return author$project$Window$Size$sub(
-		A2(elm$core$Basics$composeL, toMsg, mdgriffith$elm_ui$Element$classifyDevice));
+		A3(author$project$Device$compose, author$project$Device$WindowSize, mdgriffith$elm_ui$Element$classifyDevice, deviceToMsg));
 };
 var elm$core$Platform$Sub$batch = _Platform_batch;
 var author$project$Main$subs = function (_n0) {
