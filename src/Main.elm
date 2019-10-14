@@ -32,7 +32,7 @@ main =
     Browser.document
         { init = init
         , update = update
-        , view = view
+        , view = \model -> view model.device model.page
         , subscriptions = subs
         }
 
@@ -41,8 +41,11 @@ main =
 -- MODEL
 
 
-type Model
-    = Model Device Session People
+type alias Model =
+    { device : Device
+    , session : Session
+    , page : People
+    }
 
 
 type People
@@ -87,15 +90,15 @@ update msg model =
 
 updateModel : Msg -> Model -> Model
 updateModel msg model =
-    case ( msg, model ) of
-        ( GotPeople personList, Model device session _ ) ->
-            Model device session (Loaded personList)
+    case msg of
+        GotPeople personList ->
+            { model | page = Loaded personList }
 
-        ( NotGotPeople error, Model device session _ ) ->
-            Model device session (NotLoaded error)
+        NotGotPeople error ->
+            { model | page = NotLoaded error }
 
-        ( GotDevice device, Model _ session people ) ->
-            Model device session people
+        GotDevice device ->
+            { model | device = device }
 
 
 getPeople : Session -> Cmd Msg
@@ -133,8 +136,8 @@ personSel =
 -- VIEW
 
 
-view : Model -> Browser.Document Msg
-view (Model device _ people) =
+view : Device -> People -> Browser.Document Msg
+view device people =
     { title = "People | SAI"
     , body =
         [ layout
@@ -305,5 +308,5 @@ parseError =
 
 
 subs : Model -> Sub Msg
-subs (Model _ _ _) =
+subs _ =
     Sub.batch [ Device.sub GotDevice ]
