@@ -9,6 +9,7 @@ import Element.Events exposing (..)
 import Element.Font as Font
 import Element.Input as Input
 import Element.Region as Region
+import Framework.Color as Color
 import Graphql.Http as Http
 import Graphql.Http.GraphqlError as GraphqlError exposing (GraphqlError)
 import Graphql.Operation exposing (RootQuery)
@@ -21,6 +22,7 @@ import SAI.Object.Person as Person
 import SAI.Query as Query
 import SAI.ScalarCodecs exposing (Id)
 import Session exposing (Session)
+import Spinner
 
 
 
@@ -165,7 +167,7 @@ pageView : Device -> People -> Element Msg
 pageView { class } page =
     case ( page, class ) of
         ( Loading, _ ) ->
-            text "Loading..."
+            Spinner.threeCircles [ Spinner.Size 64, Spinner.Center ]
 
         ( Loaded personList, Phone ) ->
             peopleView 1 personList
@@ -185,14 +187,23 @@ pageView { class } page =
 
 peopleView : Int -> List Person -> View
 peopleView peoplePerRow people =
-    Grid.grid
-        [ Grid.spacing 16
-        , Grid.padding 16
-        , Grid.width fill
-        , Grid.emptyPadding personPadding
-        , Grid.elementsPerRow peoplePerRow
-        ]
-        (List.map personView people)
+    List.map personView people
+        |> (if peoplePerRow == 1 then
+                column
+                    [ spacing 16
+                    , padding 16
+                    , width fill
+                    ]
+
+            else
+                Grid.grid
+                    [ Grid.Spacing 16
+                    , Grid.Padding 16
+                    , Grid.Width fill
+                    , Grid.EmptyPadding personPadding
+                    , Grid.ElementsPerRow peoplePerRow
+                    ]
+           )
 
 
 personPadding : Int

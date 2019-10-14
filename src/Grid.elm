@@ -1,4 +1,4 @@
-module Grid exposing (columnSpacing, elementsPerRow, emptyPadding, grid, height, padding, rowSpacing, spacing, width)
+module Grid exposing (Attribute(..), grid)
 
 import Element exposing (Element, Length, column, el, fill, none, row)
 import List.Extra
@@ -13,46 +13,6 @@ type Attribute
     | ColumnSpacing Int
     | ElementsPerRow Int
     | EmptyPadding Int
-
-
-width : Length -> Attribute
-width =
-    Width
-
-
-height : Length -> Attribute
-height =
-    Height
-
-
-padding : Int -> Attribute
-padding =
-    Padding
-
-
-spacing : Int -> Attribute
-spacing =
-    Spacing
-
-
-elementsPerRow : Int -> Attribute
-elementsPerRow =
-    ElementsPerRow
-
-
-emptyPadding : Int -> Attribute
-emptyPadding =
-    EmptyPadding
-
-
-columnSpacing : Int -> Attribute
-columnSpacing =
-    ColumnSpacing
-
-
-rowSpacing : Int -> Attribute
-rowSpacing =
-    RowSpacing
 
 
 grid : List Attribute -> List (Element msg) -> Element msg

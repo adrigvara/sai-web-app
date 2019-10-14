@@ -6,7 +6,6 @@
     "elm-version": "0.19.0",
     "dependencies": {
         "direct": {
-            "damienklinnert/elm-spinner": "3.0.2",
             "dillonkearns/elm-graphql": "4.3.1",
             "elm/browser": "1.0.1",
             "elm/core": "1.0.2",
@@ -14,6 +13,7 @@
             "elm/json": "1.1.3",
             "elm/url": "1.0.0",
             "elm-community/list-extra": "8.2.2",
+            "lucamug/style-framework": "1.1.0",
             "mdgriffith/elm-ui": "1.1.5"
         },
         "indirect": {
@@ -23,9 +23,12 @@
             "elm/file": "1.0.5",
             "elm/http": "2.0.0",
             "elm/regex": "1.0.0",
+            "elm/svg": "1.0.1",
             "elm/time": "1.0.0",
             "elm/virtual-dom": "1.0.2",
-            "lukewestby/elm-string-interpolate": "1.0.4"
+            "fredcy/elm-parseint": "2.0.1",
+            "lukewestby/elm-string-interpolate": "1.0.4",
+            "noahzgordon/elm-color-extra": "1.0.2"
         }
     },
     "test-dependencies": {
