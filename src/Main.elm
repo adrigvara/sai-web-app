@@ -13,9 +13,9 @@ import Graphql.Http as Http
 import Graphql.Http.GraphqlError as GraphqlError exposing (GraphqlError)
 import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
+import Grid
 import Html exposing (Html)
 import Json.Decode as Decode exposing (Value)
-import Layout
 import SAI.Object
 import SAI.Object.Person as Person
 import SAI.Query as Query
@@ -181,24 +181,19 @@ pageView { class } page =
 
 
 peopleView : Int -> List Person -> View
-peopleView =
-    Layout.grid columnRules rowRules personPadding personView
+peopleView peoplePerRow people =
+    Grid.grid
+        [ Grid.spacing 16
+        , Grid.padding 16
+        , Grid.emptyPadding personPadding
+        , Grid.elementsPerRow peoplePerRow
+        ]
+        (List.map personView people)
 
 
-columnRules : List Rule
-columnRules =
-    [ padding 16
-    , spacing 16
-    , width fill
-    , height fill
-    ]
-
-
-rowRules : List Rule
-rowRules =
-    [ spacing 16
-    , width fill
-    ]
+personPadding : Int
+personPadding =
+    16
 
 
 personView : Person -> Element Msg
@@ -214,11 +209,6 @@ personView person =
         , nameView person.name
         , contactInfoView person
         ]
-
-
-personPadding : Int
-personPadding =
-    16
 
 
 imageView : String -> Element Msg

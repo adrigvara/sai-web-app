@@ -7720,6 +7720,14 @@ var author$project$Main$errorView = function (error) {
 			]);
 	}
 };
+var author$project$Grid$ElementsPerRow = function (a) {
+	return {$: 4, a: a};
+};
+var author$project$Grid$elementsPerRow = author$project$Grid$ElementsPerRow;
+var author$project$Grid$EmptyPadding = function (a) {
+	return {$: 5, a: a};
+};
+var author$project$Grid$emptyPadding = author$project$Grid$EmptyPadding;
 var mdgriffith$elm_ui$Internal$Model$Height = function (a) {
 	return {$: 8, a: a};
 };
@@ -13070,19 +13078,19 @@ var mdgriffith$elm_ui$Element$padding = function (x) {
 			x,
 			x));
 };
-var author$project$Layout$empty = function (emptyPadding) {
+var author$project$Grid$empty = function (p) {
 	return A2(
 		mdgriffith$elm_ui$Element$el,
 		_List_fromArray(
 			[
-				mdgriffith$elm_ui$Element$padding(emptyPadding),
+				mdgriffith$elm_ui$Element$padding(p),
 				mdgriffith$elm_ui$Element$width(mdgriffith$elm_ui$Element$fill),
 				mdgriffith$elm_ui$Element$height(mdgriffith$elm_ui$Element$fill)
 			]),
 		mdgriffith$elm_ui$Element$none);
 };
 var elm$core$Basics$modBy = _Basics_modBy;
-var author$project$Layout$numberOfSlots = F2(
+var author$project$Grid$numberOfSlots = F2(
 	function (n, list) {
 		return A2(
 			elm$core$Basics$modBy,
@@ -13110,15 +13118,136 @@ var elm$core$List$repeat = F2(
 	function (n, value) {
 		return A3(elm$core$List$repeatHelp, _List_Nil, n, value);
 	});
-var author$project$Layout$fillSlots = F3(
-	function (emptyPadding, n, list) {
+var author$project$Grid$fillSlots = F3(
+	function (p, n, list) {
 		return _Utils_ap(
 			list,
 			A2(
 				elm$core$List$repeat,
-				A2(author$project$Layout$numberOfSlots, n, list),
-				author$project$Layout$empty(emptyPadding)));
+				A2(author$project$Grid$numberOfSlots, n, list),
+				author$project$Grid$empty(p)));
 	});
+var mdgriffith$elm_ui$Internal$Flag$spacing = mdgriffith$elm_ui$Internal$Flag$flag(3);
+var mdgriffith$elm_ui$Internal$Model$SpacingStyle = F3(
+	function (a, b, c) {
+		return {$: 5, a: a, b: b, c: c};
+	});
+var mdgriffith$elm_ui$Internal$Model$spacingName = F2(
+	function (x, y) {
+		return 'spacing-' + (elm$core$String$fromInt(x) + ('-' + elm$core$String$fromInt(y)));
+	});
+var mdgriffith$elm_ui$Element$spacing = function (x) {
+	return A2(
+		mdgriffith$elm_ui$Internal$Model$StyleClass,
+		mdgriffith$elm_ui$Internal$Flag$spacing,
+		A3(
+			mdgriffith$elm_ui$Internal$Model$SpacingStyle,
+			A2(mdgriffith$elm_ui$Internal$Model$spacingName, x, x),
+			x,
+			x));
+};
+var author$project$Grid$getColumnAttribute = function (attribute) {
+	switch (attribute.$) {
+		case 1:
+			var x = attribute.a;
+			return elm$core$Maybe$Just(
+				mdgriffith$elm_ui$Element$spacing(x));
+		case 2:
+			var x = attribute.a;
+			return elm$core$Maybe$Just(
+				mdgriffith$elm_ui$Element$spacing(x));
+		case 0:
+			var x = attribute.a;
+			return elm$core$Maybe$Just(
+				mdgriffith$elm_ui$Element$padding(x));
+		default:
+			return elm$core$Maybe$Nothing;
+	}
+};
+var author$project$Grid$getColumnAttributes = function (attributes) {
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				mdgriffith$elm_ui$Element$width(mdgriffith$elm_ui$Element$fill),
+				mdgriffith$elm_ui$Element$height(mdgriffith$elm_ui$Element$fill)
+			]),
+		A2(elm$core$List$filterMap, author$project$Grid$getColumnAttribute, attributes));
+};
+var author$project$Grid$isElementsPerRow = function (attribute) {
+	if (attribute.$ === 4) {
+		return true;
+	} else {
+		return false;
+	}
+};
+var elm_community$list_extra$List$Extra$find = F2(
+	function (predicate, list) {
+		find:
+		while (true) {
+			if (!list.b) {
+				return elm$core$Maybe$Nothing;
+			} else {
+				var first = list.a;
+				var rest = list.b;
+				if (predicate(first)) {
+					return elm$core$Maybe$Just(first);
+				} else {
+					var $temp$predicate = predicate,
+						$temp$list = rest;
+					predicate = $temp$predicate;
+					list = $temp$list;
+					continue find;
+				}
+			}
+		}
+	});
+var author$project$Grid$getElementsPerRow = function (attributes) {
+	var _n0 = A2(elm_community$list_extra$List$Extra$find, author$project$Grid$isElementsPerRow, attributes);
+	if ((!_n0.$) && (_n0.a.$ === 4)) {
+		var n = _n0.a.a;
+		return n;
+	} else {
+		return 2;
+	}
+};
+var author$project$Grid$isEmptyPadding = function (attribute) {
+	if (attribute.$ === 5) {
+		return true;
+	} else {
+		return false;
+	}
+};
+var author$project$Grid$getEmptyPadding = function (attributes) {
+	var _n0 = A2(elm_community$list_extra$List$Extra$find, author$project$Grid$isEmptyPadding, attributes);
+	if ((!_n0.$) && (_n0.a.$ === 5)) {
+		var n = _n0.a.a;
+		return n;
+	} else {
+		return 0;
+	}
+};
+var author$project$Grid$getRowAttribute = function (attribute) {
+	switch (attribute.$) {
+		case 1:
+			var x = attribute.a;
+			return elm$core$Maybe$Just(
+				mdgriffith$elm_ui$Element$spacing(x));
+		case 3:
+			var x = attribute.a;
+			return elm$core$Maybe$Just(
+				mdgriffith$elm_ui$Element$spacing(x));
+		default:
+			return elm$core$Maybe$Nothing;
+	}
+};
+var author$project$Grid$getRowAttributes = function (attributes) {
+	return _Utils_ap(
+		_List_fromArray(
+			[
+				mdgriffith$elm_ui$Element$width(mdgriffith$elm_ui$Element$fill)
+			]),
+		A2(elm$core$List$filterMap, author$project$Grid$getRowAttribute, attributes));
+};
 var elm$core$List$drop = F2(
 	function (n, list) {
 		drop:
@@ -13330,49 +13459,33 @@ var mdgriffith$elm_ui$Element$row = F2(
 						attrs))),
 			mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
-var author$project$Layout$grid = F6(
-	function (columnRules, rowRules, emptyPadding, toElement, n, list) {
+var author$project$Grid$grid = F2(
+	function (attributeList, elementList) {
+		var n = author$project$Grid$getElementsPerRow(attributeList);
 		return A2(
 			mdgriffith$elm_ui$Element$column,
-			columnRules,
+			author$project$Grid$getColumnAttributes(attributeList),
 			A2(
 				elm$core$List$map,
-				mdgriffith$elm_ui$Element$row(rowRules),
+				mdgriffith$elm_ui$Element$row(
+					author$project$Grid$getRowAttributes(attributeList)),
 				A2(
 					elm_community$list_extra$List$Extra$groupsOf,
 					n,
 					A3(
-						author$project$Layout$fillSlots,
-						emptyPadding,
+						author$project$Grid$fillSlots,
+						author$project$Grid$getEmptyPadding(attributeList),
 						n,
-						A2(elm$core$List$map, toElement, list)))));
+						elementList))));
 	});
-var mdgriffith$elm_ui$Internal$Flag$spacing = mdgriffith$elm_ui$Internal$Flag$flag(3);
-var mdgriffith$elm_ui$Internal$Model$SpacingStyle = F3(
-	function (a, b, c) {
-		return {$: 5, a: a, b: b, c: c};
-	});
-var mdgriffith$elm_ui$Internal$Model$spacingName = F2(
-	function (x, y) {
-		return 'spacing-' + (elm$core$String$fromInt(x) + ('-' + elm$core$String$fromInt(y)));
-	});
-var mdgriffith$elm_ui$Element$spacing = function (x) {
-	return A2(
-		mdgriffith$elm_ui$Internal$Model$StyleClass,
-		mdgriffith$elm_ui$Internal$Flag$spacing,
-		A3(
-			mdgriffith$elm_ui$Internal$Model$SpacingStyle,
-			A2(mdgriffith$elm_ui$Internal$Model$spacingName, x, x),
-			x,
-			x));
+var author$project$Grid$Padding = function (a) {
+	return {$: 0, a: a};
 };
-var author$project$Main$columnRules = _List_fromArray(
-	[
-		mdgriffith$elm_ui$Element$padding(16),
-		mdgriffith$elm_ui$Element$spacing(16),
-		mdgriffith$elm_ui$Element$width(mdgriffith$elm_ui$Element$fill),
-		mdgriffith$elm_ui$Element$height(mdgriffith$elm_ui$Element$fill)
-	]);
+var author$project$Grid$padding = author$project$Grid$Padding;
+var author$project$Grid$Spacing = function (a) {
+	return {$: 1, a: a};
+};
+var author$project$Grid$spacing = author$project$Grid$Spacing;
 var author$project$Main$personPadding = 16;
 var author$project$Main$addressView = function (address) {
 	if (!address.$) {
@@ -13582,12 +13695,19 @@ var author$project$Main$personView = function (person) {
 				author$project$Main$contactInfoView(person)
 			]));
 };
-var author$project$Main$rowRules = _List_fromArray(
-	[
-		mdgriffith$elm_ui$Element$spacing(16),
-		mdgriffith$elm_ui$Element$width(mdgriffith$elm_ui$Element$fill)
-	]);
-var author$project$Main$peopleView = A4(author$project$Layout$grid, author$project$Main$columnRules, author$project$Main$rowRules, author$project$Main$personPadding, author$project$Main$personView);
+var author$project$Main$peopleView = F2(
+	function (peoplePerRow, people) {
+		return A2(
+			author$project$Grid$grid,
+			_List_fromArray(
+				[
+					author$project$Grid$spacing(16),
+					author$project$Grid$padding(16),
+					author$project$Grid$emptyPadding(author$project$Main$personPadding),
+					author$project$Grid$elementsPerRow(peoplePerRow)
+				]),
+			A2(elm$core$List$map, author$project$Main$personView, people));
+	});
 var author$project$Main$pageView = F2(
 	function (_n0, page) {
 		var _class = _n0.cO;
