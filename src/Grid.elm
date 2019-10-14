@@ -1,16 +1,28 @@
-module Grid exposing (elementsPerRow, emptyPadding, grid, padding, spacing)
+module Grid exposing (columnSpacing, elementsPerRow, emptyPadding, grid, height, padding, rowSpacing, spacing, width)
 
-import Element exposing (Element, column, el, fill, height, none, row, width)
+import Element exposing (Element, Length, column, el, fill, none, row)
 import List.Extra
 
 
 type Attribute
-    = Padding Int
+    = Width Length
+    | Height Length
+    | Padding Int
     | Spacing Int
     | RowSpacing Int
     | ColumnSpacing Int
     | ElementsPerRow Int
     | EmptyPadding Int
+
+
+width : Length -> Attribute
+width =
+    Width
+
+
+height : Length -> Attribute
+height =
+    Height
 
 
 padding : Int -> Attribute
@@ -71,7 +83,7 @@ numberOfSlots n list =
 
 empty : Int -> Element x
 empty p =
-    el [ Element.padding p, width fill, height fill ] none
+    el [ Element.padding p, Element.width fill, Element.height fill ] none
 
 
 getElementsPerRow : List Attribute -> Int
@@ -116,7 +128,7 @@ isEmptyPadding attribute =
 
 getRowAttributes : List Attribute -> List (Element.Attribute msg)
 getRowAttributes attributes =
-    [ width fill ] ++ List.filterMap getRowAttribute attributes
+    [ Element.width fill ] ++ List.filterMap getRowAttribute attributes
 
 
 getRowAttribute : Attribute -> Maybe (Element.Attribute msg)
@@ -134,8 +146,7 @@ getRowAttribute attribute =
 
 getColumnAttributes : List Attribute -> List (Element.Attribute msg)
 getColumnAttributes attributes =
-    [ width fill, height fill ]
-        ++ List.filterMap getColumnAttribute attributes
+    List.filterMap getColumnAttribute attributes
 
 
 getColumnAttribute : Attribute -> Maybe (Element.Attribute msg)
@@ -149,6 +160,12 @@ getColumnAttribute attribute =
 
         Padding x ->
             Just <| Element.padding x
+
+        Width x ->
+            Just <| Element.width x
+
+        Height x ->
+            Just <| Element.height x
 
         _ ->
             Nothing

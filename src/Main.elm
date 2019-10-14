@@ -188,6 +188,7 @@ peopleView peoplePerRow people =
     Grid.grid
         [ Grid.spacing 16
         , Grid.padding 16
+        , Grid.width fill
         , Grid.emptyPadding personPadding
         , Grid.elementsPerRow peoplePerRow
         ]
