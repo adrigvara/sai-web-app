@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module SAI.Scalar exposing (Codecs, Id(..), defaultCodecs, defineCodecs, unwrapCodecs, unwrapEncoder)
+module SAI.Scalar exposing (Codecs, Id(..), Long(..), defaultCodecs, defineCodecs, unwrapCodecs, unwrapEncoder)
 
 import Graphql.Codec exposing (Codec)
 import Graphql.Internal.Builder.Object as Object
@@ -15,16 +15,25 @@ type Id
     = Id String
 
 
+type Long
+    = Long String
+
+
 defineCodecs :
-    { codecId : Codec valueId }
-    -> Codecs valueId
+    { codecId : Codec valueId
+    , codecLong : Codec valueLong
+    }
+    -> Codecs valueId valueLong
 defineCodecs definitions =
     Codecs definitions
 
 
 unwrapCodecs :
-    Codecs valueId
-    -> { codecId : Codec valueId }
+    Codecs valueId valueLong
+    ->
+        { codecId : Codec valueId
+        , codecLong : Codec valueLong
+        }
 unwrapCodecs (Codecs unwrappedCodecs) =
     unwrappedCodecs
 
@@ -33,18 +42,24 @@ unwrapEncoder getter (Codecs unwrappedCodecs) =
     (unwrappedCodecs |> getter |> .encoder) >> Graphql.Internal.Encode.fromJson
 
 
-type Codecs valueId
-    = Codecs (RawCodecs valueId)
+type Codecs valueId valueLong
+    = Codecs (RawCodecs valueId valueLong)
 
 
-type alias RawCodecs valueId =
-    { codecId : Codec valueId }
+type alias RawCodecs valueId valueLong =
+    { codecId : Codec valueId
+    , codecLong : Codec valueLong
+    }
 
 
-defaultCodecs : RawCodecs Id
+defaultCodecs : RawCodecs Id Long
 defaultCodecs =
     { codecId =
         { encoder = \(Id raw) -> Encode.string raw
         , decoder = Object.scalarDecoder |> Decode.map Id
+        }
+    , codecLong =
+        { encoder = \(Long raw) -> Encode.string raw
+        , decoder = Object.scalarDecoder |> Decode.map Long
         }
     }

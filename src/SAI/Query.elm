@@ -20,6 +20,36 @@ import SAI.ScalarCodecs
 import SAI.Union
 
 
+type alias PeoplepaginatedOptionalArguments =
+    { aftercursor : OptionalArgument String }
+
+
+type alias PeoplepaginatedRequiredArguments =
+    { npeople : SAI.ScalarCodecs.Long
+    , status : SAI.Enum.Status.Status
+    }
+
+
+{-|
+
+  - aftercursor -
+  - npeople -
+  - status -
+
+-}
+peoplepaginated : (PeoplepaginatedOptionalArguments -> PeoplepaginatedOptionalArguments) -> PeoplepaginatedRequiredArguments -> SelectionSet decodesTo SAI.Object.PersonConnection -> SelectionSet decodesTo RootQuery
+peoplepaginated fillInOptionals requiredArgs object_ =
+    let
+        filledInOptionals =
+            fillInOptionals { aftercursor = Absent }
+
+        optionalArgs =
+            [ Argument.optional "aftercursor" filledInOptionals.aftercursor Encode.string ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "peoplepaginated" (optionalArgs ++ [ Argument.required "npeople" requiredArgs.npeople (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecLong), Argument.required "status" requiredArgs.status (Encode.enum SAI.Enum.Status.toString) ]) object_ identity
+
+
 type alias PeoplebystatusRequiredArguments =
     { status : SAI.Enum.Status.Status }
 

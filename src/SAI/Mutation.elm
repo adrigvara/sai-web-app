@@ -34,17 +34,20 @@ createPerson requiredArgs object_ =
 
 
 type alias UpdatePersonRequiredArguments =
-    { input : SAI.InputObject.UpdatePersonInput }
+    { input : SAI.InputObject.UpdatePersonInput
+    , id : SAI.ScalarCodecs.Id
+    }
 
 
 {-|
 
   - input -
+  - id -
 
 -}
 updatePerson : UpdatePersonRequiredArguments -> SelectionSet decodesTo SAI.Object.Person -> SelectionSet decodesTo RootMutation
 updatePerson requiredArgs object_ =
-    Object.selectionForCompositeField "updatePerson" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdatePersonInput ] object_ identity
+    Object.selectionForCompositeField "updatePerson" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdatePersonInput, Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity
 
 
 type alias DisablePersonRequiredArguments =

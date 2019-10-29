@@ -11,6 +11,8 @@ import Graphql.Operation exposing (RootMutation, RootQuery, RootSubscription)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
+import SAI.Enum.DayOfWeek
+import SAI.Enum.Month
 import SAI.InputObject
 import SAI.Interface
 import SAI.Object
@@ -35,3 +37,15 @@ month =
 year : SelectionSet Int SAI.Object.Date
 year =
     Object.selectionForField "Int" "year" [] Decode.int
+
+
+{-| -}
+monthenum : SelectionSet SAI.Enum.Month.Month SAI.Object.Date
+monthenum =
+    Object.selectionForField "Enum.Month.Month" "monthenum" [] SAI.Enum.Month.decoder
+
+
+{-| -}
+weekday : SelectionSet SAI.Enum.DayOfWeek.DayOfWeek SAI.Object.Date
+weekday =
+    Object.selectionForField "Enum.DayOfWeek.DayOfWeek" "weekday" [] SAI.Enum.DayOfWeek.decoder

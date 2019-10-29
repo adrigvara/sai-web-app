@@ -22,10 +22,15 @@ grid attributeList elementList =
             getElementsPerRow attributeList
     in
     elementList
-        |> fillSlots (getEmptyPadding attributeList) n
-        |> List.Extra.groupsOf n
-        |> List.map (row <| getRowAttributes <| attributeList)
-        |> column (getColumnAttributes attributeList)
+        |> (if n > 1 then
+                fillSlots (getEmptyPadding attributeList) n
+                    >> List.Extra.groupsOf n
+                    >> List.map (row <| getRowAttributes <| attributeList)
+
+            else
+                identity
+           )
+        >> column (getColumnAttributes attributeList)
 
 
 fillSlots : Int -> Int -> List (Element msg) -> List (Element msg)

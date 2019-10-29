@@ -12,8 +12,13 @@ type alias Id =
     SAI.Scalar.Id
 
 
-codecs : SAI.Scalar.Codecs Id
+type alias Long =
+    SAI.Scalar.Long
+
+
+codecs : SAI.Scalar.Codecs Id Long
 codecs =
     SAI.Scalar.defineCodecs
         { codecId = defaultCodecs.codecId
+        , codecLong = defaultCodecs.codecLong
         }

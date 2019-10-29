@@ -91,14 +91,17 @@ buildCreatePersonInput required fillOptionals =
     let
         optionals =
             fillOptionals
-                { email = Absent, address = Absent, phone = Absent, image = Absent }
+                { image = Absent }
     in
-    { name = required.name, lastName = required.lastName, email = optionals.email, address = optionals.address, phone = optionals.phone, civilState = required.civilState, gender = required.gender, birthday = required.birthday, image = optionals.image }
+    { name = required.name, lastName = required.lastName, email = required.email, address = required.address, phone = required.phone, civilState = required.civilState, gender = required.gender, birthday = required.birthday, image = optionals.image }
 
 
 type alias CreatePersonInputRequiredFields =
     { name : String
     , lastName : String
+    , email : String
+    , address : String
+    , phone : String
     , civilState : SAI.Enum.CivilState.CivilState
     , gender : SAI.Enum.Gender.Gender
     , birthday : CreateDate
@@ -106,11 +109,7 @@ type alias CreatePersonInputRequiredFields =
 
 
 type alias CreatePersonInputOptionalFields =
-    { email : OptionalArgument String
-    , address : OptionalArgument String
-    , phone : OptionalArgument String
-    , image : OptionalArgument String
-    }
+    { image : OptionalArgument String }
 
 
 {-| Type for the CreatePersonInput input object.
@@ -118,9 +117,9 @@ type alias CreatePersonInputOptionalFields =
 type alias CreatePersonInput =
     { name : String
     , lastName : String
-    , email : OptionalArgument String
-    , address : OptionalArgument String
-    , phone : OptionalArgument String
+    , email : String
+    , address : String
+    , phone : String
     , civilState : SAI.Enum.CivilState.CivilState
     , gender : SAI.Enum.Gender.Gender
     , birthday : CreateDate
@@ -133,7 +132,7 @@ type alias CreatePersonInput =
 encodeCreatePersonInput : CreatePersonInput -> Value
 encodeCreatePersonInput input =
     Encode.maybeObject
-        [ ( "name", Encode.string input.name |> Just ), ( "lastName", Encode.string input.lastName |> Just ), ( "email", Encode.string |> Encode.optional input.email ), ( "address", Encode.string |> Encode.optional input.address ), ( "phone", Encode.string |> Encode.optional input.phone ), ( "civilState", Encode.enum SAI.Enum.CivilState.toString input.civilState |> Just ), ( "gender", Encode.enum SAI.Enum.Gender.toString input.gender |> Just ), ( "birthday", encodeCreateDate input.birthday |> Just ), ( "image", Encode.string |> Encode.optional input.image ) ]
+        [ ( "name", Encode.string input.name |> Just ), ( "lastName", Encode.string input.lastName |> Just ), ( "email", Encode.string input.email |> Just ), ( "address", Encode.string input.address |> Just ), ( "phone", Encode.string input.phone |> Just ), ( "civilState", Encode.enum SAI.Enum.CivilState.toString input.civilState |> Just ), ( "gender", Encode.enum SAI.Enum.Gender.toString input.gender |> Just ), ( "birthday", encodeCreateDate input.birthday |> Just ), ( "image", Encode.string |> Encode.optional input.image ) ]
 
 
 buildCreateUserInput : CreateUserInputRequiredFields -> (CreateUserInputOptionalFields -> CreateUserInputOptionalFields) -> CreateUserInput
@@ -217,18 +216,14 @@ encodeUpdateGroupInput input =
         [ ( "id", (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) input.id |> Just ), ( "name", Encode.string input.name |> Just ), ( "members", (Encode.string |> Encode.maybe |> Encode.list) |> Encode.optional input.members ) ]
 
 
-buildUpdatePersonInput : UpdatePersonInputRequiredFields -> (UpdatePersonInputOptionalFields -> UpdatePersonInputOptionalFields) -> UpdatePersonInput
-buildUpdatePersonInput required fillOptionals =
+buildUpdatePersonInput : (UpdatePersonInputOptionalFields -> UpdatePersonInputOptionalFields) -> UpdatePersonInput
+buildUpdatePersonInput fillOptionals =
     let
         optionals =
             fillOptionals
                 { name = Absent, lastName = Absent, email = Absent, address = Absent, phone = Absent, civilState = Absent, gender = Absent, birthday = Absent, image = Absent }
     in
-    { id = required.id, name = optionals.name, lastName = optionals.lastName, email = optionals.email, address = optionals.address, phone = optionals.phone, civilState = optionals.civilState, gender = optionals.gender, birthday = optionals.birthday, image = optionals.image }
-
-
-type alias UpdatePersonInputRequiredFields =
-    { id : SAI.ScalarCodecs.Id }
+    { name = optionals.name, lastName = optionals.lastName, email = optionals.email, address = optionals.address, phone = optionals.phone, civilState = optionals.civilState, gender = optionals.gender, birthday = optionals.birthday, image = optionals.image }
 
 
 type alias UpdatePersonInputOptionalFields =
@@ -247,8 +242,7 @@ type alias UpdatePersonInputOptionalFields =
 {-| Type for the UpdatePersonInput input object.
 -}
 type alias UpdatePersonInput =
-    { id : SAI.ScalarCodecs.Id
-    , name : OptionalArgument String
+    { name : OptionalArgument String
     , lastName : OptionalArgument String
     , email : OptionalArgument String
     , address : OptionalArgument String
@@ -265,7 +259,7 @@ type alias UpdatePersonInput =
 encodeUpdatePersonInput : UpdatePersonInput -> Value
 encodeUpdatePersonInput input =
     Encode.maybeObject
-        [ ( "id", (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) input.id |> Just ), ( "name", Encode.string |> Encode.optional input.name ), ( "lastName", Encode.string |> Encode.optional input.lastName ), ( "email", Encode.string |> Encode.optional input.email ), ( "address", Encode.string |> Encode.optional input.address ), ( "phone", Encode.string |> Encode.optional input.phone ), ( "civilState", Encode.enum SAI.Enum.CivilState.toString |> Encode.optional input.civilState ), ( "gender", Encode.enum SAI.Enum.Gender.toString |> Encode.optional input.gender ), ( "birthday", encodeCreateDate |> Encode.optional input.birthday ), ( "image", Encode.string |> Encode.optional input.image ) ]
+        [ ( "name", Encode.string |> Encode.optional input.name ), ( "lastName", Encode.string |> Encode.optional input.lastName ), ( "email", Encode.string |> Encode.optional input.email ), ( "address", Encode.string |> Encode.optional input.address ), ( "phone", Encode.string |> Encode.optional input.phone ), ( "civilState", Encode.enum SAI.Enum.CivilState.toString |> Encode.optional input.civilState ), ( "gender", Encode.enum SAI.Enum.Gender.toString |> Encode.optional input.gender ), ( "birthday", encodeCreateDate |> Encode.optional input.birthday ), ( "image", Encode.string |> Encode.optional input.image ) ]
 
 
 buildUpdateUserInput : UpdateUserInputRequiredFields -> (UpdateUserInputOptionalFields -> UpdateUserInputOptionalFields) -> UpdateUserInput

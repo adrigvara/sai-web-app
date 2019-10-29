@@ -17,8 +17,20 @@ type LoginResult
     = LoginResult
 
 
+type PageInfo
+    = PageInfo
+
+
 type Person
     = Person
+
+
+type PersonConnection
+    = PersonConnection
+
+
+type PersonEdge
+    = PersonEdge
 
 
 type User
