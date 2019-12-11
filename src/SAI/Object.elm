@@ -9,6 +9,10 @@ type Date
     = Date
 
 
+type Event
+    = Event
+
+
 type Group
     = Group
 
@@ -31,6 +35,10 @@ type PersonConnection
 
 type PersonEdge
     = PersonEdge
+
+
+type Time
+    = Time
 
 
 type User

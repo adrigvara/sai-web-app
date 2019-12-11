@@ -39,6 +39,18 @@ members object_ =
 
 
 {-| -}
+events : SelectionSet decodesTo SAI.Object.Event -> SelectionSet (List decodesTo) SAI.Object.Group
+events object_ =
+    Object.selectionForCompositeField "events" [] object_ (identity >> Decode.list)
+
+
+{-| -}
+image : SelectionSet String SAI.Object.Group
+image =
+    Object.selectionForField "String" "image" [] Decode.string
+
+
+{-| -}
 status : SelectionSet SAI.Enum.Status.Status SAI.Object.Group
 status =
     Object.selectionForField "Enum.Status.Status" "status" [] SAI.Enum.Status.decoder

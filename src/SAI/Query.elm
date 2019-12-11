@@ -11,6 +11,11 @@ import Graphql.Operation exposing (RootMutation, RootQuery, RootSubscription)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode exposing (Decoder)
+import SAI.Enum.CivilState
+import SAI.Enum.EventStatus
+import SAI.Enum.EventType
+import SAI.Enum.Gender
+import SAI.Enum.LevelAccess
 import SAI.Enum.Status
 import SAI.InputObject
 import SAI.Interface
@@ -20,54 +25,37 @@ import SAI.ScalarCodecs
 import SAI.Union
 
 
-type alias PeoplepaginatedOptionalArguments =
-    { aftercursor : OptionalArgument String }
-
-
-type alias PeoplepaginatedRequiredArguments =
-    { npeople : SAI.ScalarCodecs.Long
-    , status : SAI.Enum.Status.Status
+type alias PeopleOptionalArguments =
+    { after : OptionalArgument String
+    , first : OptionalArgument Int
+    , status : OptionalArgument SAI.Enum.Status.Status
+    , gender : OptionalArgument SAI.Enum.Gender.Gender
+    , civilStatus : OptionalArgument SAI.Enum.CivilState.CivilState
+    , query : OptionalArgument String
     }
 
 
 {-|
 
-  - aftercursor -
-  - npeople -
+  - after -
+  - first -
   - status -
+  - gender -
+  - civilStatus -
+  - query -
 
 -}
-peoplepaginated : (PeoplepaginatedOptionalArguments -> PeoplepaginatedOptionalArguments) -> PeoplepaginatedRequiredArguments -> SelectionSet decodesTo SAI.Object.PersonConnection -> SelectionSet decodesTo RootQuery
-peoplepaginated fillInOptionals requiredArgs object_ =
+people : (PeopleOptionalArguments -> PeopleOptionalArguments) -> SelectionSet decodesTo SAI.Object.PersonConnection -> SelectionSet decodesTo RootQuery
+people fillInOptionals object_ =
     let
         filledInOptionals =
-            fillInOptionals { aftercursor = Absent }
+            fillInOptionals { after = Absent, first = Absent, status = Absent, gender = Absent, civilStatus = Absent, query = Absent }
 
         optionalArgs =
-            [ Argument.optional "aftercursor" filledInOptionals.aftercursor Encode.string ]
+            [ Argument.optional "after" filledInOptionals.after Encode.string, Argument.optional "first" filledInOptionals.first Encode.int, Argument.optional "status" filledInOptionals.status (Encode.enum SAI.Enum.Status.toString), Argument.optional "gender" filledInOptionals.gender (Encode.enum SAI.Enum.Gender.toString), Argument.optional "civilStatus" filledInOptionals.civilStatus (Encode.enum SAI.Enum.CivilState.toString), Argument.optional "query" filledInOptionals.query Encode.string ]
                 |> List.filterMap identity
     in
-    Object.selectionForCompositeField "peoplepaginated" (optionalArgs ++ [ Argument.required "npeople" requiredArgs.npeople (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecLong), Argument.required "status" requiredArgs.status (Encode.enum SAI.Enum.Status.toString) ]) object_ identity
-
-
-type alias PeoplebystatusRequiredArguments =
-    { status : SAI.Enum.Status.Status }
-
-
-{-|
-
-  - status -
-
--}
-peoplebystatus : PeoplebystatusRequiredArguments -> SelectionSet decodesTo SAI.Object.Person -> SelectionSet (List decodesTo) RootQuery
-peoplebystatus requiredArgs object_ =
-    Object.selectionForCompositeField "peoplebystatus" [ Argument.required "status" requiredArgs.status (Encode.enum SAI.Enum.Status.toString) ] object_ (identity >> Decode.list)
-
-
-{-| -}
-people : SelectionSet decodesTo SAI.Object.Person -> SelectionSet (List decodesTo) RootQuery
-people object_ =
-    Object.selectionForCompositeField "people" [] object_ (identity >> Decode.list)
+    Object.selectionForCompositeField "people" optionalArgs object_ identity
 
 
 type alias PersonRequiredArguments =
@@ -84,10 +72,31 @@ person requiredArgs object_ =
     Object.selectionForCompositeField "person" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ (identity >> Decode.nullable)
 
 
-{-| -}
-groups : SelectionSet decodesTo SAI.Object.Group -> SelectionSet (List decodesTo) RootQuery
-groups object_ =
-    Object.selectionForCompositeField "groups" [] object_ (identity >> Decode.list)
+type alias GroupsOptionalArguments =
+    { status : OptionalArgument SAI.Enum.Status.Status
+    , query : OptionalArgument String
+    , userId : OptionalArgument SAI.ScalarCodecs.Id
+    }
+
+
+{-|
+
+  - status -
+  - query -
+  - userId -
+
+-}
+groups : (GroupsOptionalArguments -> GroupsOptionalArguments) -> SelectionSet decodesTo SAI.Object.Group -> SelectionSet (List decodesTo) RootQuery
+groups fillInOptionals object_ =
+    let
+        filledInOptionals =
+            fillInOptionals { status = Absent, query = Absent, userId = Absent }
+
+        optionalArgs =
+            [ Argument.optional "status" filledInOptionals.status (Encode.enum SAI.Enum.Status.toString), Argument.optional "query" filledInOptionals.query Encode.string, Argument.optional "userId" filledInOptionals.userId (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "groups" optionalArgs object_ (identity >> Decode.list)
 
 
 type alias GroupRequiredArguments =
@@ -104,13 +113,67 @@ group requiredArgs object_ =
     Object.selectionForCompositeField "group" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ (identity >> Decode.nullable)
 
 
-{-| -}
-users : SelectionSet decodesTo SAI.Object.User -> SelectionSet (List decodesTo) RootQuery
-users object_ =
-    Object.selectionForCompositeField "users" [] object_ (identity >> Decode.list)
+type alias UsersOptionalArguments =
+    { status : OptionalArgument SAI.Enum.Status.Status
+    , levelAccess : OptionalArgument SAI.Enum.LevelAccess.LevelAccess
+    , group : OptionalArgument String
+    }
 
 
-type alias UserRequiredArguments =
+{-|
+
+  - status -
+  - levelAccess -
+  - group -
+
+-}
+users : (UsersOptionalArguments -> UsersOptionalArguments) -> SelectionSet decodesTo SAI.Object.Person -> SelectionSet (List decodesTo) RootQuery
+users fillInOptionals object_ =
+    let
+        filledInOptionals =
+            fillInOptionals { status = Absent, levelAccess = Absent, group = Absent }
+
+        optionalArgs =
+            [ Argument.optional "status" filledInOptionals.status (Encode.enum SAI.Enum.Status.toString), Argument.optional "levelAccess" filledInOptionals.levelAccess (Encode.enum SAI.Enum.LevelAccess.toString), Argument.optional "group" filledInOptionals.group Encode.string ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "users" optionalArgs object_ (identity >> Decode.list)
+
+
+type alias EventsOptionalArguments =
+    { group : OptionalArgument SAI.ScalarCodecs.Id
+    , status : OptionalArgument SAI.Enum.Status.Status
+    , fatherEvent : OptionalArgument SAI.ScalarCodecs.Id
+    , eventStatus : OptionalArgument SAI.Enum.EventStatus.EventStatus
+    , query : OptionalArgument String
+    , type_ : OptionalArgument SAI.Enum.EventType.EventType
+    }
+
+
+{-|
+
+  - group -
+  - status -
+  - fatherEvent -
+  - eventStatus -
+  - query -
+  - type\_ -
+
+-}
+events : (EventsOptionalArguments -> EventsOptionalArguments) -> SelectionSet decodesTo SAI.Object.Event -> SelectionSet (List decodesTo) RootQuery
+events fillInOptionals object_ =
+    let
+        filledInOptionals =
+            fillInOptionals { group = Absent, status = Absent, fatherEvent = Absent, eventStatus = Absent, query = Absent, type_ = Absent }
+
+        optionalArgs =
+            [ Argument.optional "group" filledInOptionals.group (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId), Argument.optional "status" filledInOptionals.status (Encode.enum SAI.Enum.Status.toString), Argument.optional "fatherEvent" filledInOptionals.fatherEvent (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId), Argument.optional "eventStatus" filledInOptionals.eventStatus (Encode.enum SAI.Enum.EventStatus.toString), Argument.optional "query" filledInOptionals.query Encode.string, Argument.optional "type" filledInOptionals.type_ (Encode.enum SAI.Enum.EventType.toString) ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "events" optionalArgs object_ (identity >> Decode.list)
+
+
+type alias EventRequiredArguments =
     { id : SAI.ScalarCodecs.Id }
 
 
@@ -119,9 +182,9 @@ type alias UserRequiredArguments =
   - id -
 
 -}
-user : UserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet (Maybe decodesTo) RootQuery
-user requiredArgs object_ =
-    Object.selectionForCompositeField "user" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ (identity >> Decode.nullable)
+event : EventRequiredArguments -> SelectionSet decodesTo SAI.Object.Event -> SelectionSet (Maybe decodesTo) RootQuery
+event requiredArgs object_ =
+    Object.selectionForCompositeField "event" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ (identity >> Decode.nullable)
 
 
 type alias LoginRequiredArguments =

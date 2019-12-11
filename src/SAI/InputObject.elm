@@ -11,7 +11,9 @@ import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
 import SAI.Enum.CivilState
+import SAI.Enum.Frecuency
 import SAI.Enum.Gender
+import SAI.Enum.LevelAccess
 import SAI.Enum.Status
 import SAI.Interface
 import SAI.Object
@@ -56,11 +58,13 @@ buildCreateGroupInput required fillOptionals =
             fillOptionals
                 { members = Absent, status = Absent }
     in
-    { name = required.name, members = optionals.members, status = optionals.status }
+    { name = required.name, members = optionals.members, image = required.image, status = optionals.status }
 
 
 type alias CreateGroupInputRequiredFields =
-    { name : String }
+    { name : String
+    , image : String
+    }
 
 
 type alias CreateGroupInputOptionalFields =
@@ -74,6 +78,7 @@ type alias CreateGroupInputOptionalFields =
 type alias CreateGroupInput =
     { name : String
     , members : OptionalArgument (List (Maybe String))
+    , image : String
     , status : OptionalArgument SAI.Enum.Status.Status
     }
 
@@ -83,7 +88,7 @@ type alias CreateGroupInput =
 encodeCreateGroupInput : CreateGroupInput -> Value
 encodeCreateGroupInput input =
     Encode.maybeObject
-        [ ( "name", Encode.string input.name |> Just ), ( "members", (Encode.string |> Encode.maybe |> Encode.list) |> Encode.optional input.members ), ( "status", Encode.enum SAI.Enum.Status.toString |> Encode.optional input.status ) ]
+        [ ( "name", Encode.string input.name |> Just ), ( "members", (Encode.string |> Encode.maybe |> Encode.list) |> Encode.optional input.members ), ( "image", Encode.string input.image |> Just ), ( "status", Encode.enum SAI.Enum.Status.toString |> Encode.optional input.status ) ]
 
 
 buildCreatePersonInput : CreatePersonInputRequiredFields -> (CreatePersonInputOptionalFields -> CreatePersonInputOptionalFields) -> CreatePersonInput
@@ -93,7 +98,7 @@ buildCreatePersonInput required fillOptionals =
             fillOptionals
                 { image = Absent }
     in
-    { name = required.name, lastName = required.lastName, email = required.email, address = required.address, phone = required.phone, civilState = required.civilState, gender = required.gender, birthday = required.birthday, image = optionals.image }
+    { name = required.name, lastName = required.lastName, email = required.email, address = required.address, phone = required.phone, civilState = required.civilState, gender = required.gender, birthday = required.birthday, image = optionals.image, account = required.account }
 
 
 type alias CreatePersonInputRequiredFields =
@@ -105,6 +110,7 @@ type alias CreatePersonInputRequiredFields =
     , civilState : SAI.Enum.CivilState.CivilState
     , gender : SAI.Enum.Gender.Gender
     , birthday : CreateDate
+    , account : Bool
     }
 
 
@@ -124,6 +130,7 @@ type alias CreatePersonInput =
     , gender : SAI.Enum.Gender.Gender
     , birthday : CreateDate
     , image : OptionalArgument String
+    , account : Bool
     }
 
 
@@ -132,79 +139,156 @@ type alias CreatePersonInput =
 encodeCreatePersonInput : CreatePersonInput -> Value
 encodeCreatePersonInput input =
     Encode.maybeObject
-        [ ( "name", Encode.string input.name |> Just ), ( "lastName", Encode.string input.lastName |> Just ), ( "email", Encode.string input.email |> Just ), ( "address", Encode.string input.address |> Just ), ( "phone", Encode.string input.phone |> Just ), ( "civilState", Encode.enum SAI.Enum.CivilState.toString input.civilState |> Just ), ( "gender", Encode.enum SAI.Enum.Gender.toString input.gender |> Just ), ( "birthday", encodeCreateDate input.birthday |> Just ), ( "image", Encode.string |> Encode.optional input.image ) ]
+        [ ( "name", Encode.string input.name |> Just ), ( "lastName", Encode.string input.lastName |> Just ), ( "email", Encode.string input.email |> Just ), ( "address", Encode.string input.address |> Just ), ( "phone", Encode.string input.phone |> Just ), ( "civilState", Encode.enum SAI.Enum.CivilState.toString input.civilState |> Just ), ( "gender", Encode.enum SAI.Enum.Gender.toString input.gender |> Just ), ( "birthday", encodeCreateDate input.birthday |> Just ), ( "image", Encode.string |> Encode.optional input.image ), ( "account", Encode.bool input.account |> Just ) ]
 
 
-buildCreateUserInput : CreateUserInputRequiredFields -> (CreateUserInputOptionalFields -> CreateUserInputOptionalFields) -> CreateUserInput
-buildCreateUserInput required fillOptionals =
-    let
-        optionals =
-            fillOptionals
-                { group = Absent, person = Absent, status = Absent }
-    in
-    { username = required.username, password = required.password, levelaccess = required.levelaccess, group = optionals.group, person = optionals.person, status = optionals.status }
+buildCreateTime : CreateTimeRequiredFields -> CreateTime
+buildCreateTime required =
+    { hour = required.hour, minutes = required.minutes, seconds = required.seconds }
 
 
-type alias CreateUserInputRequiredFields =
-    { username : String
-    , password : String
-    , levelaccess : String
+type alias CreateTimeRequiredFields =
+    { hour : Int
+    , minutes : Int
+    , seconds : Int
     }
 
 
-type alias CreateUserInputOptionalFields =
-    { group : OptionalArgument String
-    , person : OptionalArgument String
-    , status : OptionalArgument SAI.Enum.Status.Status
-    }
-
-
-{-| Type for the CreateUserInput input object.
+{-| Type for the CreateTime input object.
 -}
-type alias CreateUserInput =
-    { username : String
-    , password : String
-    , levelaccess : String
-    , group : OptionalArgument String
-    , person : OptionalArgument String
-    , status : OptionalArgument SAI.Enum.Status.Status
+type alias CreateTime =
+    { hour : Int
+    , minutes : Int
+    , seconds : Int
     }
 
 
-{-| Encode a CreateUserInput into a value that can be used as an argument.
+{-| Encode a CreateTime into a value that can be used as an argument.
 -}
-encodeCreateUserInput : CreateUserInput -> Value
-encodeCreateUserInput input =
+encodeCreateTime : CreateTime -> Value
+encodeCreateTime input =
     Encode.maybeObject
-        [ ( "username", Encode.string input.username |> Just ), ( "password", Encode.string input.password |> Just ), ( "levelaccess", Encode.string input.levelaccess |> Just ), ( "group", Encode.string |> Encode.optional input.group ), ( "person", Encode.string |> Encode.optional input.person ), ( "status", Encode.enum SAI.Enum.Status.toString |> Encode.optional input.status ) ]
+        [ ( "hour", Encode.int input.hour |> Just ), ( "minutes", Encode.int input.minutes |> Just ), ( "seconds", Encode.int input.seconds |> Just ) ]
 
 
-buildUpdateGroupInput : UpdateGroupInputRequiredFields -> (UpdateGroupInputOptionalFields -> UpdateGroupInputOptionalFields) -> UpdateGroupInput
-buildUpdateGroupInput required fillOptionals =
+buildEventInput : EventInputRequiredFields -> (EventInputOptionalFields -> EventInputOptionalFields) -> EventInput
+buildEventInput required fillOptionals =
     let
         optionals =
             fillOptionals
-                { members = Absent }
+                { assistants = Absent }
     in
-    { id = required.id, name = required.name, members = optionals.members }
+    { name = required.name, startdate = required.startdate, enddate = required.enddate, starttime = required.starttime, endtime = required.endtime, groups = required.groups, frecuency = required.frecuency, repetitions = required.repetitions, assistants = optionals.assistants }
 
 
-type alias UpdateGroupInputRequiredFields =
-    { id : SAI.ScalarCodecs.Id
-    , name : String
+type alias EventInputRequiredFields =
+    { name : String
+    , startdate : CreateDate
+    , enddate : CreateDate
+    , starttime : CreateTime
+    , endtime : CreateTime
+    , groups : List (Maybe String)
+    , frecuency : SAI.Enum.Frecuency.Frecuency
+    , repetitions : Int
     }
+
+
+type alias EventInputOptionalFields =
+    { assistants : OptionalArgument (List (Maybe String)) }
+
+
+{-| Type for the EventInput input object.
+-}
+type alias EventInput =
+    { name : String
+    , startdate : CreateDate
+    , enddate : CreateDate
+    , starttime : CreateTime
+    , endtime : CreateTime
+    , groups : List (Maybe String)
+    , frecuency : SAI.Enum.Frecuency.Frecuency
+    , repetitions : Int
+    , assistants : OptionalArgument (List (Maybe String))
+    }
+
+
+{-| Encode a EventInput into a value that can be used as an argument.
+-}
+encodeEventInput : EventInput -> Value
+encodeEventInput input =
+    Encode.maybeObject
+        [ ( "name", Encode.string input.name |> Just ), ( "startdate", encodeCreateDate input.startdate |> Just ), ( "enddate", encodeCreateDate input.enddate |> Just ), ( "starttime", encodeCreateTime input.starttime |> Just ), ( "endtime", encodeCreateTime input.endtime |> Just ), ( "groups", (Encode.string |> Encode.maybe |> Encode.list) input.groups |> Just ), ( "frecuency", Encode.enum SAI.Enum.Frecuency.toString input.frecuency |> Just ), ( "repetitions", Encode.int input.repetitions |> Just ), ( "assistants", (Encode.string |> Encode.maybe |> Encode.list) |> Encode.optional input.assistants ) ]
+
+
+buildUpdateEventInput : (UpdateEventInputOptionalFields -> UpdateEventInputOptionalFields) -> UpdateEventInput
+buildUpdateEventInput fillOptionals =
+    let
+        optionals =
+            fillOptionals
+                { name = Absent, startdate = Absent, enddate = Absent, starttime = Absent, endtime = Absent, groups = Absent, frecuency = Absent, repetitions = Absent, assistants = Absent }
+    in
+    { name = optionals.name, startdate = optionals.startdate, enddate = optionals.enddate, starttime = optionals.starttime, endtime = optionals.endtime, groups = optionals.groups, frecuency = optionals.frecuency, repetitions = optionals.repetitions, assistants = optionals.assistants }
+
+
+type alias UpdateEventInputOptionalFields =
+    { name : OptionalArgument String
+    , startdate : OptionalArgument CreateDate
+    , enddate : OptionalArgument CreateDate
+    , starttime : OptionalArgument CreateTime
+    , endtime : OptionalArgument CreateTime
+    , groups : OptionalArgument (List (Maybe String))
+    , frecuency : OptionalArgument SAI.Enum.Frecuency.Frecuency
+    , repetitions : OptionalArgument Int
+    , assistants : OptionalArgument (List (Maybe String))
+    }
+
+
+{-| Type for the UpdateEventInput input object.
+-}
+type alias UpdateEventInput =
+    { name : OptionalArgument String
+    , startdate : OptionalArgument CreateDate
+    , enddate : OptionalArgument CreateDate
+    , starttime : OptionalArgument CreateTime
+    , endtime : OptionalArgument CreateTime
+    , groups : OptionalArgument (List (Maybe String))
+    , frecuency : OptionalArgument SAI.Enum.Frecuency.Frecuency
+    , repetitions : OptionalArgument Int
+    , assistants : OptionalArgument (List (Maybe String))
+    }
+
+
+{-| Encode a UpdateEventInput into a value that can be used as an argument.
+-}
+encodeUpdateEventInput : UpdateEventInput -> Value
+encodeUpdateEventInput input =
+    Encode.maybeObject
+        [ ( "name", Encode.string |> Encode.optional input.name ), ( "startdate", encodeCreateDate |> Encode.optional input.startdate ), ( "enddate", encodeCreateDate |> Encode.optional input.enddate ), ( "starttime", encodeCreateTime |> Encode.optional input.starttime ), ( "endtime", encodeCreateTime |> Encode.optional input.endtime ), ( "groups", (Encode.string |> Encode.maybe |> Encode.list) |> Encode.optional input.groups ), ( "frecuency", Encode.enum SAI.Enum.Frecuency.toString |> Encode.optional input.frecuency ), ( "repetitions", Encode.int |> Encode.optional input.repetitions ), ( "assistants", (Encode.string |> Encode.maybe |> Encode.list) |> Encode.optional input.assistants ) ]
+
+
+buildUpdateGroupInput : (UpdateGroupInputOptionalFields -> UpdateGroupInputOptionalFields) -> UpdateGroupInput
+buildUpdateGroupInput fillOptionals =
+    let
+        optionals =
+            fillOptionals
+                { name = Absent, members = Absent, image = Absent }
+    in
+    { name = optionals.name, members = optionals.members, image = optionals.image }
 
 
 type alias UpdateGroupInputOptionalFields =
-    { members : OptionalArgument (List (Maybe String)) }
+    { name : OptionalArgument String
+    , members : OptionalArgument (List (Maybe String))
+    , image : OptionalArgument String
+    }
 
 
 {-| Type for the UpdateGroupInput input object.
 -}
 type alias UpdateGroupInput =
-    { id : SAI.ScalarCodecs.Id
-    , name : String
+    { name : OptionalArgument String
     , members : OptionalArgument (List (Maybe String))
+    , image : OptionalArgument String
     }
 
 
@@ -213,7 +297,7 @@ type alias UpdateGroupInput =
 encodeUpdateGroupInput : UpdateGroupInput -> Value
 encodeUpdateGroupInput input =
     Encode.maybeObject
-        [ ( "id", (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) input.id |> Just ), ( "name", Encode.string input.name |> Just ), ( "members", (Encode.string |> Encode.maybe |> Encode.list) |> Encode.optional input.members ) ]
+        [ ( "name", Encode.string |> Encode.optional input.name ), ( "members", (Encode.string |> Encode.maybe |> Encode.list) |> Encode.optional input.members ), ( "image", Encode.string |> Encode.optional input.image ) ]
 
 
 buildUpdatePersonInput : (UpdatePersonInputOptionalFields -> UpdatePersonInputOptionalFields) -> UpdatePersonInput
@@ -267,34 +351,29 @@ buildUpdateUserInput required fillOptionals =
     let
         optionals =
             fillOptionals
-                { group = Absent, person = Absent }
+                { groups = Absent }
     in
-    { id = required.id, username = required.username, password = required.password, levelaccess = required.levelaccess, group = optionals.group, person = optionals.person }
+    { username = required.username, password = required.password, levelaccess = required.levelaccess, groups = optionals.groups }
 
 
 type alias UpdateUserInputRequiredFields =
-    { id : SAI.ScalarCodecs.Id
-    , username : String
+    { username : String
     , password : String
-    , levelaccess : String
+    , levelaccess : SAI.Enum.LevelAccess.LevelAccess
     }
 
 
 type alias UpdateUserInputOptionalFields =
-    { group : OptionalArgument String
-    , person : OptionalArgument String
-    }
+    { groups : OptionalArgument (List (Maybe String)) }
 
 
 {-| Type for the UpdateUserInput input object.
 -}
 type alias UpdateUserInput =
-    { id : SAI.ScalarCodecs.Id
-    , username : String
+    { username : String
     , password : String
-    , levelaccess : String
-    , group : OptionalArgument String
-    , person : OptionalArgument String
+    , levelaccess : SAI.Enum.LevelAccess.LevelAccess
+    , groups : OptionalArgument (List (Maybe String))
     }
 
 
@@ -303,4 +382,4 @@ type alias UpdateUserInput =
 encodeUpdateUserInput : UpdateUserInput -> Value
 encodeUpdateUserInput input =
     Encode.maybeObject
-        [ ( "id", (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) input.id |> Just ), ( "username", Encode.string input.username |> Just ), ( "password", Encode.string input.password |> Just ), ( "levelaccess", Encode.string input.levelaccess |> Just ), ( "group", Encode.string |> Encode.optional input.group ), ( "person", Encode.string |> Encode.optional input.person ) ]
+        [ ( "username", Encode.string input.username |> Just ), ( "password", Encode.string input.password |> Just ), ( "levelaccess", Encode.enum SAI.Enum.LevelAccess.toString input.levelaccess |> Just ), ( "groups", (Encode.string |> Encode.maybe |> Encode.list) |> Encode.optional input.groups ) ]

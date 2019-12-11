@@ -11,6 +11,7 @@ import Graphql.Operation exposing (RootMutation, RootQuery, RootSubscription)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode exposing (Decoder)
+import SAI.Enum.EventType
 import SAI.InputObject
 import SAI.Interface
 import SAI.Object
@@ -93,17 +94,20 @@ createGroup requiredArgs object_ =
 
 
 type alias UpdateGroupRequiredArguments =
-    { input : SAI.InputObject.UpdateGroupInput }
+    { input : SAI.InputObject.UpdateGroupInput
+    , id : SAI.ScalarCodecs.Id
+    }
 
 
 {-|
 
   - input -
+  - id -
 
 -}
 updateGroup : UpdateGroupRequiredArguments -> SelectionSet decodesTo SAI.Object.Group -> SelectionSet decodesTo RootMutation
 updateGroup requiredArgs object_ =
-    Object.selectionForCompositeField "updateGroup" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateGroupInput ] object_ identity
+    Object.selectionForCompositeField "updateGroup" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateGroupInput, Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity
 
 
 type alias DisableGroupRequiredArguments =
@@ -134,32 +138,21 @@ enableGroup requiredArgs object_ =
     Object.selectionForCompositeField "enableGroup" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity
 
 
-type alias CreateUserRequiredArguments =
-    { input : SAI.InputObject.CreateUserInput }
-
-
-{-|
-
-  - input -
-
--}
-createUser : CreateUserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet decodesTo RootMutation
-createUser requiredArgs object_ =
-    Object.selectionForCompositeField "createUser" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeCreateUserInput ] object_ identity
-
-
 type alias UpdateUserRequiredArguments =
-    { input : SAI.InputObject.UpdateUserInput }
+    { input : SAI.InputObject.UpdateUserInput
+    , id : SAI.ScalarCodecs.Id
+    }
 
 
 {-|
 
   - input -
+  - id -
 
 -}
-updateUser : UpdateUserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet decodesTo RootMutation
+updateUser : UpdateUserRequiredArguments -> SelectionSet decodesTo SAI.Object.Person -> SelectionSet decodesTo RootMutation
 updateUser requiredArgs object_ =
-    Object.selectionForCompositeField "updateUser" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateUserInput ] object_ identity
+    Object.selectionForCompositeField "updateUser" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateUserInput, Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity
 
 
 type alias DisableUserRequiredArguments =
@@ -171,7 +164,7 @@ type alias DisableUserRequiredArguments =
   - id -
 
 -}
-disableUser : DisableUserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet decodesTo RootMutation
+disableUser : DisableUserRequiredArguments -> SelectionSet decodesTo SAI.Object.Person -> SelectionSet decodesTo RootMutation
 disableUser requiredArgs object_ =
     Object.selectionForCompositeField "disableUser" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity
 
@@ -185,6 +178,71 @@ type alias EnableUserRequiredArguments =
   - id -
 
 -}
-enableUser : EnableUserRequiredArguments -> SelectionSet decodesTo SAI.Object.User -> SelectionSet decodesTo RootMutation
+enableUser : EnableUserRequiredArguments -> SelectionSet decodesTo SAI.Object.Person -> SelectionSet decodesTo RootMutation
 enableUser requiredArgs object_ =
     Object.selectionForCompositeField "enableUser" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity
+
+
+type alias CreateEventRequiredArguments =
+    { input : SAI.InputObject.EventInput }
+
+
+{-|
+
+  - input -
+
+-}
+createEvent : CreateEventRequiredArguments -> SelectionSet decodesTo SAI.Object.Event -> SelectionSet decodesTo RootMutation
+createEvent requiredArgs object_ =
+    Object.selectionForCompositeField "createEvent" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeEventInput ] object_ identity
+
+
+type alias UpdateEventRequiredArguments =
+    { input : SAI.InputObject.UpdateEventInput
+    , id : SAI.ScalarCodecs.Id
+    }
+
+
+{-|
+
+  - input -
+  - id -
+
+-}
+updateEvent : UpdateEventRequiredArguments -> SelectionSet decodesTo SAI.Object.Event -> SelectionSet decodesTo RootMutation
+updateEvent requiredArgs object_ =
+    Object.selectionForCompositeField "updateEvent" [ Argument.required "input" requiredArgs.input SAI.InputObject.encodeUpdateEventInput, Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId) ] object_ identity
+
+
+type alias DisableEventRequiredArguments =
+    { id : SAI.ScalarCodecs.Id
+    , type_ : SAI.Enum.EventType.EventType
+    }
+
+
+{-|
+
+  - id -
+  - type\_ -
+
+-}
+disableEvent : DisableEventRequiredArguments -> SelectionSet decodesTo SAI.Object.Event -> SelectionSet decodesTo RootMutation
+disableEvent requiredArgs object_ =
+    Object.selectionForCompositeField "disableEvent" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId), Argument.required "type" requiredArgs.type_ (Encode.enum SAI.Enum.EventType.toString) ] object_ identity
+
+
+type alias EnableEventRequiredArguments =
+    { id : SAI.ScalarCodecs.Id
+    , type_ : SAI.Enum.EventType.EventType
+    }
+
+
+{-|
+
+  - id -
+  - type\_ -
+
+-}
+enableEvent : EnableEventRequiredArguments -> SelectionSet decodesTo SAI.Object.Event -> SelectionSet decodesTo RootMutation
+enableEvent requiredArgs object_ =
+    Object.selectionForCompositeField "enableEvent" [ Argument.required "id" requiredArgs.id (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapEncoder .codecId), Argument.required "type" requiredArgs.type_ (Encode.enum SAI.Enum.EventType.toString) ] object_ identity

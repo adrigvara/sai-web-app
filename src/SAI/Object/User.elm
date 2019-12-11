@@ -11,6 +11,7 @@ import Graphql.Operation exposing (RootMutation, RootQuery, RootSubscription)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
+import SAI.Enum.LevelAccess
 import SAI.Enum.Status
 import SAI.InputObject
 import SAI.Interface
@@ -21,15 +22,9 @@ import SAI.Union
 
 
 {-| -}
-id : SelectionSet SAI.ScalarCodecs.Id SAI.Object.User
-id =
-    Object.selectionForField "ScalarCodecs.Id" "id" [] (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapCodecs |> .codecId |> .decoder)
-
-
-{-| -}
-username : SelectionSet String SAI.Object.User
+username : SelectionSet (Maybe String) SAI.Object.User
 username =
-    Object.selectionForField "String" "username" [] Decode.string
+    Object.selectionForField "(Maybe String)" "username" [] (Decode.string |> Decode.nullable)
 
 
 {-| -}
@@ -39,21 +34,15 @@ password =
 
 
 {-| -}
-levelaccess : SelectionSet String SAI.Object.User
+levelaccess : SelectionSet SAI.Enum.LevelAccess.LevelAccess SAI.Object.User
 levelaccess =
-    Object.selectionForField "String" "levelaccess" [] Decode.string
+    Object.selectionForField "Enum.LevelAccess.LevelAccess" "levelaccess" [] SAI.Enum.LevelAccess.decoder
 
 
 {-| -}
-group : SelectionSet decodesTo SAI.Object.Group -> SelectionSet (Maybe decodesTo) SAI.Object.User
-group object_ =
-    Object.selectionForCompositeField "group" [] object_ (identity >> Decode.nullable)
-
-
-{-| -}
-person : SelectionSet decodesTo SAI.Object.Person -> SelectionSet (Maybe decodesTo) SAI.Object.User
-person object_ =
-    Object.selectionForCompositeField "person" [] object_ (identity >> Decode.nullable)
+groups : SelectionSet decodesTo SAI.Object.Group -> SelectionSet (Maybe (List (Maybe decodesTo))) SAI.Object.User
+groups object_ =
+    Object.selectionForCompositeField "groups" [] object_ (identity >> Decode.nullable >> Decode.list >> Decode.nullable)
 
 
 {-| -}

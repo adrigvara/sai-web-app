@@ -20,12 +20,24 @@ import SAI.Union
 
 
 {-| -}
-find : SelectionSet (Maybe Bool) SAI.Object.LoginResult
+id : SelectionSet (Maybe SAI.ScalarCodecs.Id) SAI.Object.LoginResult
+id =
+    Object.selectionForField "(Maybe ScalarCodecs.Id)" "id" [] (SAI.ScalarCodecs.codecs |> SAI.Scalar.unwrapCodecs |> .codecId |> .decoder |> Decode.nullable)
+
+
+{-| -}
+find : SelectionSet Bool SAI.Object.LoginResult
 find =
-    Object.selectionForField "(Maybe Bool)" "find" [] (Decode.bool |> Decode.nullable)
+    Object.selectionForField "Bool" "find" [] Decode.bool
 
 
 {-| -}
 levelaccess : SelectionSet (Maybe String) SAI.Object.LoginResult
 levelaccess =
     Object.selectionForField "(Maybe String)" "levelaccess" [] (Decode.string |> Decode.nullable)
+
+
+{-| -}
+groups : SelectionSet decodesTo SAI.Object.Group -> SelectionSet (Maybe (List (Maybe decodesTo))) SAI.Object.LoginResult
+groups object_ =
+    Object.selectionForCompositeField "groups" [] object_ (identity >> Decode.nullable >> Decode.list >> Decode.nullable)

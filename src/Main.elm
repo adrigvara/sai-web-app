@@ -13,12 +13,14 @@ import Framework.Color as Color
 import Graphql.Http as Http
 import Graphql.Http.GraphqlError as GraphqlError exposing (GraphqlError)
 import Graphql.Operation exposing (RootQuery)
+import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Grid
 import Html exposing (Html)
 import Json.Decode as Decode exposing (Value)
 import SAI.Object
-import SAI.Object.Person as Person
+import SAI.Object.Person
+import SAI.Object.PersonConnection
 import SAI.Query as Query
 import SAI.ScalarCodecs exposing (Id)
 import Session exposing (Session)
@@ -120,18 +122,20 @@ peopleResultToMsg peopeResult =
 
 peopleSel : SelectionSet (List Person) RootQuery
 peopleSel =
-    Query.people personSel
+    Query.people
+        (\args -> { args | first = Present 20 })
+        (SAI.Object.PersonConnection.nodes personSel)
 
 
 personSel : SelectionSet Person SAI.Object.Person
 personSel =
     SelectionSet.map6 Person
-        Person.id
-        Person.image
-        Person.fullName
-        Person.email
-        Person.phone
-        Person.address
+        SAI.Object.Person.id
+        SAI.Object.Person.image
+        SAI.Object.Person.fullName
+        SAI.Object.Person.email
+        SAI.Object.Person.phone
+        SAI.Object.Person.address
 
 
 

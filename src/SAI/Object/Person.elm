@@ -11,6 +11,7 @@ import Graphql.Operation exposing (RootMutation, RootQuery, RootSubscription)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
+import SAI.Enum.AtentionNeed
 import SAI.Enum.CivilState
 import SAI.Enum.Gender
 import SAI.Enum.Progress
@@ -67,6 +68,12 @@ phone =
 
 
 {-| -}
+groups : SelectionSet decodesTo SAI.Object.Group -> SelectionSet (List decodesTo) SAI.Object.Person
+groups object_ =
+    Object.selectionForCompositeField "groups" [] object_ (identity >> Decode.list)
+
+
+{-| -}
 socialCategory : SelectionSet SAI.Enum.SocialCategory.SocialCategory SAI.Object.Person
 socialCategory =
     Object.selectionForField "Enum.SocialCategory.SocialCategory" "socialCategory" [] SAI.Enum.SocialCategory.decoder
@@ -97,6 +104,12 @@ age =
 
 
 {-| -}
+atentionNeed : SelectionSet SAI.Enum.AtentionNeed.AtentionNeed SAI.Object.Person
+atentionNeed =
+    Object.selectionForField "Enum.AtentionNeed.AtentionNeed" "atentionNeed" [] SAI.Enum.AtentionNeed.decoder
+
+
+{-| -}
 progress : SelectionSet SAI.Enum.Progress.Progress SAI.Object.Person
 progress =
     Object.selectionForField "Enum.Progress.Progress" "progress" [] SAI.Enum.Progress.decoder
@@ -106,6 +119,12 @@ progress =
 image : SelectionSet String SAI.Object.Person
 image =
     Object.selectionForField "String" "image" [] Decode.string
+
+
+{-| -}
+user : SelectionSet decodesTo SAI.Object.User -> SelectionSet (Maybe decodesTo) SAI.Object.Person
+user object_ =
+    Object.selectionForCompositeField "user" [] object_ (identity >> Decode.nullable)
 
 
 {-| -}

@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module SAI.Object.PageInfo exposing (..)
+module SAI.Object.Time exposing (..)
 
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object
@@ -20,18 +20,18 @@ import SAI.Union
 
 
 {-| -}
-startCursor : SelectionSet (Maybe String) SAI.Object.PageInfo
-startCursor =
-    Object.selectionForField "(Maybe String)" "startCursor" [] (Decode.string |> Decode.nullable)
+hour : SelectionSet Int SAI.Object.Time
+hour =
+    Object.selectionForField "Int" "hour" [] Decode.int
 
 
 {-| -}
-endCursor : SelectionSet (Maybe String) SAI.Object.PageInfo
-endCursor =
-    Object.selectionForField "(Maybe String)" "endCursor" [] (Decode.string |> Decode.nullable)
+minutes : SelectionSet Int SAI.Object.Time
+minutes =
+    Object.selectionForField "Int" "minutes" [] Decode.int
 
 
 {-| -}
-hasNextPage : SelectionSet Bool SAI.Object.PageInfo
-hasNextPage =
-    Object.selectionForField "Bool" "hasNextPage" [] Decode.bool
+seconds : SelectionSet Int SAI.Object.Time
+seconds =
+    Object.selectionForField "Int" "seconds" [] Decode.int
